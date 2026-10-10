@@ -1,0 +1,18 @@
+name: Release story / showcase
+description: You shipped or grew an app with ShipPilot — tell us (it may be added to the README showcase)
+labels: [showcase]
+body:
+  - type: input
+    id: app
+    attributes: {label: App and store links}
+    validations: {required: true}
+  - type: textarea
+    id: story
+    attributes: {label: Which commands/skills you used and what happened}
+    validations: {required: true}
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Showcase
+      options:
+        - label: You may list this app in the README showcase.

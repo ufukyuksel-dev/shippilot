@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "ShipPilot: Claude Code plugin for shipping and growing mobile apps",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "plugins": [
     {
       "name": "shippilot",
       "source": "./",
       "description": "Build, ship and grow mobile apps with Claude Code: Fastlane releases, store listings, Android device QA, ads and a measured growth loop behind approval gates.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "author": {
         "name": "MB Worldwide Apps"
       },

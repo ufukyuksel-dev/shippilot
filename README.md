@@ -32,6 +32,14 @@ You approve every release and every ad dollar.
 - **Measured, not claimed.** The growth loop states sample sizes and decision rules up front and says
   "not yet measurable" instead of declaring a win.
 
+## See it on a real app
+
+<img src="docs/assets/real-run-v1.gif" alt="Real terminal run: store metadata checks pass for 5 locales on iOS and Android, then the public App Store listing is fetched" width="800">
+
+<sub>Real output, not a mock-up: the checker on the live app **Wordfall** (5 locales, iOS and Android) and
+`fetch_listing.py` on its public App Store page · [MP4](docs/assets/real-run-v1.mp4).
+Full audit generated from live store data: [docs/examples/audit-wordfall.md](docs/examples/audit-wordfall.md).</sub>
+
 ## Install
 
 In Claude Code:
@@ -45,6 +53,29 @@ Then, inside your app repository, start with a read-only report:
 
 ```text
 /shippilot:launch-check
+```
+
+## Try it on any app
+
+No store account, API key or Fastlane setup needed — just a public store link (yours or any other app):
+
+```text
+/shippilot:audit https://apps.apple.com/us/app/id6761381016
+/shippilot:audit "https://play.google.com/store/apps/details?id=game.wordfall.app"
+```
+
+It fetches the public listing, checks lengths against the store limits, and writes a report: what the listing
+promises, quick wins, iOS and Android drafts in up to five languages (each within its own limits), a screenshot
+story and three ad angles. It aims to finish in about a minute. Fields the public data does not include (App Store
+subtitle and keywords, the full Play description) are reported as unknown, never guessed.
+[Example report](docs/examples/audit-wordfall.md).
+
+Without the plugin, the fetcher alone gives you the raw data as JSON:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.0/scripts/fetch_listing.py
+curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.0/scripts/check_metadata.py
+python3 fetch_listing.py "https://apps.apple.com/us/app/id6761381016"
 ```
 
 ## The six stages
@@ -62,6 +93,7 @@ Then, inside your app repository, start with a read-only report:
 
 | Command | What it does | Changes anything? |
 |---|---|---|
+| `/shippilot:audit <store-url>` | Audit any public App Store / Google Play listing; drafts, screenshot story, ad angles | Writes a report file |
 | `/shippilot:launch-check` | Readiness report: Fastlane lanes, metadata, device QA, ads and analytics connections | No |
 | `/shippilot:check-metadata` | Checks App Store / Google Play length limits | No |
 | `/shippilot:beta [ios\|android\|both]` | Plans a beta upload (TestFlight / Play internal), uploads after you confirm | After approval |
@@ -139,17 +171,22 @@ and Google's [Play Console help](https://support.google.com/googleplay/android-d
 
 ## Status
 
-**v0.2 — early.** What exists today: the skills, seven commands, the metadata checker and its tests, the Fastlane
-and GitHub Actions templates. What does not exist yet: a hosted service, automatic attribution between ad platforms
+**v0.3 — early.** What exists today: the skills, eight commands, the store metadata checker and listing fetcher
+with tests, the Fastlane and GitHub Actions templates. What does not exist yet: a hosted service, automatic attribution between ad platforms
 and in-app analytics, or any autonomous spending. Feedback from people shipping real apps decides what comes next.
 
-Roadmap: App Review rejection analysis · screenshot localization pipeline · analytics adapters (Firebase/GA4) for
-the growth loop · iOS device QA.
+See [ROADMAP.md](ROADMAP.md). Questions and ideas: [Discussions](https://github.com/ufukyuksel-dev/shippilot/discussions).
+
+## Built with ShipPilot
+
+Shipped or grew an app with the plugin? [Tell us](https://github.com/ufukyuksel-dev/shippilot/issues/new?template=release-story.yml)
+and it can be listed here.
 
 ## Why we built it
 
-We are a small studio. We shipped our word game **Wordfall** to the App Store and Google Play with Claude Code and
-these workflows. ShipPilot is those workflows, cleaned of our private setup and published so anyone can use them.
+We are a small studio. Our word game **Wordfall** was built and shipped to the App Store and Google Play with Claude
+Code and the internal workflows ShipPilot is based on. ShipPilot is those workflows, cleaned of our private setup and
+published so anyone can use them.
 
 ## How this repository is built
 
@@ -165,6 +202,11 @@ Meta and Instagram are trademarks of Meta Platforms, Inc.; TikTok is a trademark
 screens in the demo are simplified re-drawings. ShipPilot is not affiliated with or endorsed by these companies.
 In the demo, Claude Code builds the app from the idea; ShipPilot covers releasing, campaigns, measuring and
 improving it.
+
+## Community
+
+[Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) ·
+[Roadmap](ROADMAP.md) · [Discussions](https://github.com/ufukyuksel-dev/shippilot/discussions)
 
 ## License
 

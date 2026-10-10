@@ -1,0 +1,93 @@
+{
+  "app_store": {
+    "source": "https://itunes.apple.com/lookup?id=6761381016&country=us",
+    "fields": {
+      "name": "WordFall: Word Games",
+      "subtitle": null,
+      "keywords": null,
+      "promotional_text": null,
+      "description": "Follow the letters in WordFall! Join Wiffle, explore different word puzzles and work toward your next personal best.\n\nVURGUN: WORD HUNT\nDive deep, catch the right letters in order and complete the word. Manage your oxygen, dodge obstacles and aim for a higher score.\n\nPLAY YOUR WAY\nExplore Word Crush, Word Tetris and daily word puzzles. Connect letters, use clues and discover new words.\n\nA NEW GOAL EACH DAY\nTake on daily challenges or compete against other players in Word Bomb online. Use all the letters to make a word before time runs out.\n\nWORDS IN FIVE LANGUAGES\nPlay with English, Turkish, German, French and Spanish words. Choose your word language and put your vocabulary to the test.\n\nA quick break or a longer puzzle session: find your next word in WordFall.\n\nTrack your position on the leaderboards. An optional subscription offers unlimited lives.\n\nPrivacy Policy: https://wordfall.org/privacy\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+      "release_notes": "If you enjoy the game, you can now support WordFall with Premium and the packs in the Shop. Small fixes and improvements.",
+      "version": "1.2.3",
+      "current_version_release_date": "2026-10-08T18:41:40Z",
+      "primary_genre": "Games",
+      "seller": "(redacted in this example)",
+      "price": "Free",
+      "in_app_purchases": null,
+      "average_rating": 0,
+      "rating_count": 0,
+      "content_rating": "12+",
+      "languages": [],
+      "iphone_screenshots": 6,
+      "ipad_screenshots": 6,
+      "store_url": "https://apps.apple.com/us/app/wordfall-word-games/id6761381016?uo=4"
+    },
+    "lengths": {
+      "name": {
+        "length": 20,
+        "limit": 30,
+        "unit": "characters",
+        "over": false
+      },
+      "description": {
+        "length": 995,
+        "limit": 4000,
+        "unit": "characters",
+        "over": false
+      },
+      "release_notes": {
+        "length": 121,
+        "limit": 4000,
+        "unit": "characters",
+        "over": false
+      }
+    },
+    "platform": "ios",
+    "app_id": "6761381016",
+    "region": "us",
+    "input_url": "https://apps.apple.com/us/app/id6761381016",
+    "fetched_at_utc": "2026-10-10T18:34:25+00:00",
+    "missing": [
+      "in_app_purchases",
+      "keywords",
+      "promotional_text",
+      "subtitle"
+    ]
+  },
+  "google_play": {
+    "source": "https://play.google.com/store/apps/details?id=game.wordfall.app&hl=en&gl=US",
+    "fields": {
+      "title": "WordFall: Word Games",
+      "short_description": null,
+      "full_description": null,
+      "meta_description": "Word game with Word Bomb online, the Vurgun dive and daily word puzzles!",
+      "developer": null,
+      "average_rating": null,
+      "screenshots": null,
+      "store_url": "https://play.google.com/store/apps/details?id=game.wordfall.app"
+    },
+    "lengths": {
+      "title": {
+        "length": 20,
+        "limit": 30,
+        "unit": "characters",
+        "over": false
+      }
+    },
+    "notes": [
+      "meta_description is the page's <meta> summary, not the full store description"
+    ],
+    "platform": "android",
+    "app_id": "game.wordfall.app",
+    "region": "en_US",
+    "input_url": "https://play.google.com/store/apps/details?id=game.wordfall.app",
+    "fetched_at_utc": "2026-10-10T18:34:26+00:00",
+    "missing": [
+      "average_rating",
+      "developer",
+      "full_description",
+      "screenshots",
+      "short_description"
+    ]
+  }
+}

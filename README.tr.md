@@ -39,6 +39,14 @@ Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 - **İddia değil ölçüm.** Büyüme döngüsü örneklem büyüklüğünü ve karar kuralını baştan söyler. Kazanım ilan etmek
   yerine gerektiğinde "henüz ölçülemez" der.
 
+## Gerçek bir uygulamada
+
+<img src="docs/assets/real-run-v1.gif" alt="Gerçek terminal çıktısı" width="800">
+
+<sub>Mock-up değil, gerçek çıktı: kontrolcü canlı uygulama **Wordfall** üzerinde (iOS ve Android, 5 dil) ve
+`fetch_listing.py` herkese açık App Store sayfasında. Canlı veriden üretilmiş audit raporu:
+[docs/examples/audit-wordfall.md](docs/examples/audit-wordfall.md).</sub>
+
 ## Kurulum
 
 Claude Code içinde:
@@ -53,6 +61,25 @@ Ardından uygulamanın repo'sunda, hiçbir şeyi değiştirmeyen bir raporla ba�
 ```text
 /shippilot:launch-check
 ```
+
+## Herhangi bir uygulamada dene
+
+Mağaza hesabı, API anahtarı ya da Fastlane gerekmez. Herkese açık bir mağaza linki (seninki ya da başka bir
+uygulamanınki) yeter:
+
+```text
+/shippilot:audit https://apps.apple.com/us/app/id6761381016
+```
+
+Komut herkese açık mağaza sayfasını okur, metin uzunluklarını mağaza sınırlarıyla karşılaştırır ve bir rapor yazar.
+Raporda şunlar var:
+- mağaza sayfasının ne vaat ettiği,
+- hızlı iyileştirmeler,
+- 5 dile kadar iOS ve Android taslakları,
+- ekran görüntüsü hikâyesi,
+- 3 reklam açısı.
+
+Herkese açık veride bulunmayan alanlar tahmin edilmez, "bilinmiyor" olarak raporlanır.
 
 ## Altı aşama
 

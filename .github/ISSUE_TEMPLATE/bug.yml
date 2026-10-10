@@ -1,0 +1,21 @@
+name: Bug report
+description: A command, skill or script did something wrong
+labels: [bug]
+body:
+  - type: input
+    id: what
+    attributes: {label: Command or file, placeholder: "/shippilot:beta, scripts/check_metadata.py, ..."}
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes: {label: What you expected and what happened}
+    validations: {required: true}
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Paste the relevant output. Remove keys, tokens, account IDs and personal data first.
+      render: text
+  - type: input
+    id: env
+    attributes: {label: Environment, placeholder: "Claude Code version, OS, Fastlane version, iOS/Android"}

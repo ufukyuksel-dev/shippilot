@@ -1,0 +1,17 @@
+name: Feature request
+description: Something ShipPilot should do in the build -> release -> ads -> measure -> improve loop
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options: [Build, Test & release, Store & creatives, Campaigns, Measure, Improve, Other]
+    validations: {required: true}
+  - type: textarea
+    id: problem
+    attributes: {label: The problem you hit while shipping or growing your app}
+    validations: {required: true}
+  - type: textarea
+    id: idea
+    attributes: {label: What you would like ShipPilot to do}
