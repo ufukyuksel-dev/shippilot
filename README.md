@@ -12,6 +12,11 @@ You approve every release and every ad dollar.
 
 [English](README.md) · [Türkçe](README.tr.md)
 
+<img src="docs/assets/demo.gif" alt="Motion demo: an idea becomes an app, passes CI, goes live on the App Store and Google Play, gets ad campaigns, results show a drop at the tutorial, the app is changed and shipped again, then re-measured" width="800">
+
+<sub>54-second motion demo · [MP4](docs/assets/demo.mp4) · illustrative, with sample numbers · rendered from
+[`docs/video/motion.html`](docs/video/motion.html)</sub>
+
 <img src="docs/assets/flow.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
 
 </div>
@@ -26,16 +31,6 @@ You approve every release and every ad dollar.
 - **Checks that run without Claude too.** The store-limit checker and the CI/CD template work in plain CI.
 - **Measured, not claimed.** The growth loop states sample sizes and decision rules up front and says
   "not yet measurable" instead of declaring a win.
-
-<div align="center">
-
-<img src="docs/assets/demo.gif" alt="Walkthrough: one fictional app goes through the six stages" width="800">
-
-<sub>47-second walkthrough · [MP4](docs/assets/demo.mp4) · one fictional app, *Pocket Words*.
-Green **REAL OUTPUT** panels are produced by `scripts/check_metadata.py` while the video is rendered; amber
-**ILLUSTRATIVE** screens are representative, with sample data. Rendered by [`docs/make_demo.py`](docs/make_demo.py).</sub>
-
-</div>
 
 ## Install
 
@@ -162,6 +157,14 @@ The skills in [`skills/`](skills) are generated, not hand-edited here. Their sin
 [SUPER_COMPUTER_AI](https://github.com/ufukyuksel-dev/SUPER_COMPUTER_AI), where project-specific content is marked
 private and removed by `scripts/export_plugin.py`, which also refuses to export home paths, secret-like strings or
 denied project names. Commands, the checker, templates and docs live here. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Trademarks
+
+App Store, App Store Connect and TestFlight are trademarks of Apple Inc.; Google Play is a trademark of Google LLC;
+Meta and Instagram are trademarks of Meta Platforms, Inc.; TikTok is a trademark of ByteDance Ltd. The store and ad
+screens in the demo are simplified re-drawings. ShipPilot is not affiliated with or endorsed by these companies.
+In the demo, Claude Code builds the app from the idea; ShipPilot covers releasing, campaigns, measuring and
+improving it.
 
 ## License
 

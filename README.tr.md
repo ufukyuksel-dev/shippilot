@@ -11,7 +11,11 @@ Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 
 [English](README.md) · [Türkçe](README.tr.md)
 
-<img src="docs/assets/flow.png" alt="Altı aşama: Build, Test & release, Store & creatives, Campaigns, Measure, Improve" width="800">
+<img src="docs/assets/demo.gif" alt="Motion demo: fikir uygulamaya dönüşüyor, CI'dan geçiyor, App Store ve Google Play'de yayına giriyor, kampanyalar çalışıyor, sonuçlara göre uygulama değişip yeniden yayımlanıyor" width="800">
+
+<sub>54 saniyelik motion demo · [MP4](docs/assets/demo.mp4) · temsilî, örnek sayılarla</sub>
+
+<img src="docs/assets/flow.png" alt="Altı aşama" width="800">
 
 </div>
 
@@ -34,16 +38,6 @@ Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 - **Claude olmadan da çalışan kontroller.** Mağaza sınırı kontrolcüsü ve CI/CD şablonu düz CI'da da çalışır.
 - **İddia değil ölçüm.** Büyüme döngüsü örneklem büyüklüğünü ve karar kuralını baştan söyler. Kazanım ilan etmek
   yerine gerektiğinde "henüz ölçülemez" der.
-
-<div align="center">
-
-<img src="docs/assets/demo.gif" alt="Tek uygulamanın altı aşamadan geçişi" width="800">
-
-<sub>47 saniyelik tanıtım · [MP4](docs/assets/demo.mp4) · uydurma bir uygulama: *Pocket Words*.
-Yeşil **REAL OUTPUT** panelleri, video üretilirken `scripts/check_metadata.py` çalıştırılarak oluşturulur. Amber
-**ILLUSTRATIVE** ekranlar temsilidir, içindeki sayılar örnek veridir.</sub>
-
-</div>
 
 ## Kurulum
 
@@ -87,6 +81,13 @@ bir iş akışıdır. Onayı dosyanın kendisi sağlamaz, GitHub sağlar. Bir ke
 store'unda durur. ShipPilot bunları yazdırmaz, commit etmez ve loglamaz.
 
 Komut listesi, skill gereksinimleri ve metadata sınır tablosu için [İngilizce README](README.md)'ye bak.
+
+## Markalar
+
+App Store, App Store Connect ve TestFlight Apple Inc.'in; Google Play Google LLC'nin; Meta ve Instagram Meta
+Platforms, Inc.'in; TikTok ise ByteDance Ltd.'nin markalarıdır. Demodaki mağaza ve reklam ekranları sadeleştirilmiş
+yeniden çizimlerdir. ShipPilot bu şirketlerle bağlantılı değildir ve onlar tarafından desteklenmemektedir. Demoda
+fikirden uygulamayı Claude Code üretir. Yayın, kampanya, ölçüm ve iyileştirme adımlarını ShipPilot üstlenir.
 
 ## Lisans
 

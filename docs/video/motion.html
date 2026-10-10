@@ -1,0 +1,383 @@
+<!doctype html>
+<!--
+  ShipPilot motion demo. Open this file in a browser to watch it live, or run `python3 docs/make_demo.py` to render
+  docs/assets/demo.mp4 / demo.gif frame by frame. One timeline: every animation uses an absolute delay in seconds.
+  Illustrative demo with sample numbers; store and platform screens are simplified re-drawings, not official UI.
+-->
+<html data-duration="54.5">
+<head>
+<meta charset="utf-8">
+<title>ShipPilot motion demo</title>
+<style>
+:root { --e: cubic-bezier(.2,.8,.2,1); --spring: cubic-bezier(.34,1.56,.64,1); --ink: #0b1220; --muted: #5b6478;
+  --blue: #2563eb; --green: #16a34a; --amber: #d97706; --red: #dc2626; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1280px; height: 720px; overflow: hidden; }
+body { font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; color: var(--ink);
+  background: linear-gradient(160deg, #f7f9ff 0%, #eef3ff 45%, #f6f0ff 100%); position: relative; }
+.blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+.scene { position: absolute; inset: 0; opacity: 0; }
+.cap { position: absolute; top: 46px; left: 0; right: 0; text-align: center; font-size: 56px; font-weight: 800; letter-spacing: -1.2px; }
+.cap small { display: block; font-size: 22px; font-weight: 600; color: var(--muted); letter-spacing: 0; margin-top: 6px; }
+.abs { position: absolute; }
+.card { background: #fff; border-radius: 22px; box-shadow: 0 24px 60px rgba(30,41,80,.16), 0 2px 6px rgba(30,41,80,.06); }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 20px; white-space: nowrap; }
+.green { background: #dcfce7; color: #166534; } .amber { background: #fef3c7; color: #92400e; } .bluec { background: #dbeafe; color: #1e40af; }
+.redc { background: #fee2e2; color: #991b1b; } .dark { background: #0b1220; color: #fff; }
+.label { position: absolute; left: 28px; bottom: 22px; font-size: 22px; font-weight: 700; color: #475569;
+  background: rgba(255,255,255,.8); border-radius: 12px; padding: 6px 14px; }
+.brand { position: absolute; right: 28px; bottom: 22px; font-size: 22px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+
+/* app icon */
+.icon { width: 120px; height: 120px; border-radius: 28px; background: linear-gradient(140deg, #7c3aed, #2563eb 60%, #06b6d4);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 20px; box-shadow: 0 18px 40px rgba(37,99,235,.35); }
+.icon span { background: rgba(255,255,255,.95); border-radius: 8px; display: grid; place-items: center; font-weight: 900; font-size: 26px; color: #4c1d95; }
+.icon.s { width: 64px; height: 64px; border-radius: 15px; padding: 10px; gap: 4px; } .icon.s span { font-size: 14px; border-radius: 4px; }
+
+/* phones */
+.phone { width: 236px; height: 470px; border-radius: 46px; background: #0b0b0f; padding: 11px; box-shadow: 0 30px 70px rgba(15,23,42,.35); }
+.screen { width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: #fff; position: relative; }
+.notch { position: absolute; top: 9px; left: 50%; width: 92px; height: 26px; margin-left: -46px; background: #0b0b0f; border-radius: 20px; z-index: 3; }
+.punch { position: absolute; top: 12px; left: 50%; width: 14px; height: 14px; margin-left: -7px; background: #0b0b0f; border-radius: 50%; z-index: 3; }
+.appbar { padding: 50px 18px 10px; font-weight: 800; font-size: 22px; }
+.appbar small { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 8px 16px; }
+.t { aspect-ratio: 1; border-radius: 7px; border: 2px solid #e2e8f0; display: grid; place-items: center; font-weight: 900; font-size: 20px; color: #fff; }
+.t.g { background: #22c55e; border-color: #22c55e; } .t.y { background: #eab308; border-color: #eab308; } .t.n { background: #94a3b8; border-color: #94a3b8; }
+.t.e { color: #0b1220; }
+.keys { position: absolute; bottom: 18px; left: 10px; right: 10px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.keys i { height: 30px; background: #e2e8f0; border-radius: 5px; }
+.list { padding: 6px 16px; } .li { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 14px; background: #f1f5f9; margin-bottom: 10px; font-weight: 700; font-size: 16px; }
+.li b { margin-left: auto; color: var(--blue); }
+
+/* pipeline */
+.node { width: 176px; height: 168px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.node .em { font-size: 54px; line-height: 1; }
+.node .nm { font-size: 22px; font-weight: 800; }
+.node .st { font-size: 15px; font-weight: 700; color: var(--muted); }
+.ok { position: absolute; top: -12px; right: -12px; width: 40px; height: 40px; border-radius: 50%; background: var(--green); color: #fff;
+  display: grid; place-items: center; font-size: 24px; font-weight: 900; box-shadow: 0 8px 20px rgba(22,163,74,.4); }
+.wire { position: absolute; height: 6px; border-radius: 6px; background: #dbe3f1; overflow: hidden; }
+.wire i { position: absolute; inset: 0; background: linear-gradient(90deg, #22c55e, #2563eb); transform-origin: left; }
+.bar { height: 14px; border-radius: 8px; background: #e2e8f0; overflow: hidden; position: relative; }
+.bar i { position: absolute; inset: 0; transform-origin: left; border-radius: 8px; }
+
+/* consoles & store pages */
+.console { width: 520px; height: 300px; padding: 0; overflow: hidden; }
+.chead { height: 58px; display: flex; align-items: center; gap: 12px; padding: 0 22px; font-size: 21px; font-weight: 800; border-bottom: 1px solid #eef2f7; }
+.glyph { width: 30px; height: 30px; border-radius: 8px; }
+.crow { display: flex; align-items: center; gap: 16px; padding: 22px; }
+.crow .nm { font-size: 24px; font-weight: 800; } .crow .vr { font-size: 16px; color: var(--muted); font-weight: 600; }
+.stack { position: relative; height: 40px; margin-left: 22px; }
+.stack .chip { position: absolute; left: 0; top: 0; opacity: 0; }
+.storepage { padding: 52px 16px 0; }
+.sp-top { display: flex; gap: 12px; align-items: center; }
+.sp-title { font-size: 19px; font-weight: 800; } .sp-sub { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.get { margin-top: 6px; display: inline-block; padding: 5px 18px; border-radius: 999px; background: #2563eb; color: #fff; font-weight: 800; font-size: 14px; }
+.install { margin-top: 14px; display: block; text-align: center; padding: 10px; border-radius: 10px; background: #15803d; color: #fff; font-weight: 800; font-size: 15px; }
+.stars { margin-top: 12px; font-size: 13px; color: var(--muted); font-weight: 700; display: flex; justify-content: space-between; }
+.shots { margin-top: 14px; display: flex; gap: 8px; }
+.shot { flex: 0 0 92px; height: 190px; border-radius: 12px; background: linear-gradient(170deg, #ede9fe, #dbeafe); padding: 10px 8px; }
+.shot .grid { padding: 4px 0; gap: 3px; } .shot .t { border-radius: 3px; border-width: 1px; font-size: 0; }
+.shot p { font-size: 10px; font-weight: 800; color: #4c1d95; }
+
+/* creatives */
+.ad { position: absolute; width: 250px; height: 386px; border-radius: 26px; box-shadow: 0 30px 60px rgba(15,23,42,.3); }
+.adhead { display: flex; align-items: center; gap: 8px; padding: 14px; font-size: 14px; font-weight: 700; }
+.av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(140deg, #7c3aed, #2563eb); }
+.adt { font-size: 26px; font-weight: 900; line-height: 1.1; padding: 0 16px; }
+.cta { position: absolute; left: 14px; right: 14px; bottom: 16px; text-align: center; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 17px; }
+.plat { position: absolute; left: 0; right: 0; bottom: -34px; text-align: center; font-weight: 800; font-size: 20px; color: #334155; }
+.mini .chip { font-size: 17px; padding: 7px 12px; }
+.toggle { width: 74px; height: 42px; border-radius: 999px; background: #cbd5e1; position: relative; }
+.toggle i { position: absolute; top: 4px; left: 4px; width: 34px; height: 34px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+
+/* dashboard */
+.kpi { font-size: 16px; color: var(--muted); font-weight: 700; } .kpi b { display: block; font-size: 40px; color: var(--ink); font-weight: 900; letter-spacing: -1px; }
+@property --n { syntax: '<integer>'; inherits: false; initial-value: 0; }
+.cnt { --n: 0; counter-reset: n var(--n); } .cnt::after { content: counter(n); }
+.fn { display: flex; align-items: center; gap: 14px; margin: 16px 0; font-weight: 700; font-size: 19px; }
+.fn .lbl { width: 170px; color: #334155; } .fn .bar { flex: 1; height: 38px; border-radius: 10px; }
+.fn .bar span { position: absolute; left: 12px; top: 7px; color: #fff; font-weight: 900; font-size: 19px; z-index: 2; }
+
+/* keyframes */
+@keyframes sceneIO { 0% { opacity: 0; } 6% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes sceneIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.3); } 65% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes inL { from { opacity: 0; transform: translateX(-260px) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes inR { from { opacity: 0; transform: translateX(260px) rotate(6deg); } to { opacity: 1; transform: none; } }
+@keyframes outL { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-120%); } }
+@keyframes inFromR { from { opacity: 0; transform: translateX(110%); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes draw { from { stroke-dashoffset: 900; } to { stroke-dashoffset: 0; } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.09); } }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,.55); } 100% { box-shadow: 0 0 0 26px rgba(220,38,38,0); } }
+@keyframes knob { from { transform: none; } to { transform: translateX(32px); } }
+@keyframes toggleOn { from { background: #cbd5e1; } to { background: #16a34a; } }
+@keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(260px, 120px); } }
+@keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-300px, -80px); } }
+@keyframes spark { 0% { opacity: 0; transform: scale(.2) rotate(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(2.2) rotate(90deg); } }
+@keyframes flyUp { 0% { opacity: 0; transform: translateY(20px) scale(.6); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), -230px) scale(.9); } }
+@keyframes glow { 0% { box-shadow: 0 30px 70px rgba(15,23,42,.35); } 50% { box-shadow: 0 0 0 10px rgba(34,197,94,.5), 0 30px 80px rgba(34,197,94,.45); } 100% { box-shadow: 0 30px 70px rgba(15,23,42,.35); } }
+@keyframes cntInstalls { from { --n: 0; } to { --n: 1240; } }
+@keyframes cntTests { from { --n: 0; } to { --n: 38; } }
+@keyframes cntBudget { from { --n: 0; } to { --n: 20; } }
+@keyframes press { 0%, 100% { transform: scale(1); } 50% { transform: scale(.9); } }
+</style>
+</head>
+<body>
+<div class="blob" style="width:520px;height:520px;left:-120px;top:-160px;background:#a5b4fc;"></div>
+<div class="blob" style="width:560px;height:560px;right:-160px;bottom:-200px;background:#99f6e4;"></div>
+<div class="blob" style="width:380px;height:380px;left:520px;top:380px;background:#f5d0fe;opacity:.35;"></div>
+
+<!-- 1 · IDEA (0–5.4) -->
+<div class="scene" style="animation:sceneIO 5.4s linear 0s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) .2s both">Your idea<small>Describe the app you want</small></div>
+  <div class="abs" style="left:250px;top:230px;width:780px;animation:fadeUp .7s var(--e) .4s both">
+    <div class="chip dark" style="margin-bottom:14px">✳︎ Claude Code</div>
+    <div class="card" style="padding:26px 30px;font-size:30px;font-weight:600;display:flex;align-items:center;gap:16px">
+      <span style="color:#7c3aed;font-weight:900">&gt;</span>
+      <span style="white-space:nowrap;animation:type 2.2s steps(46) .9s both">A word puzzle app with one new puzzle every day</span>
+    </div>
+  </div>
+  <div class="abs" style="left:590px;top:430px;width:100px;height:100px;border-radius:50%;border:4px dashed #a78bfa;animation:spark .9s ease-out 3.1s both"></div>
+  <div class="abs" style="left:580px;top:420px;animation:pop .8s var(--spring) 3.3s both"><div class="icon"><span>P</span><span>W</span><span>O</span><span>R</span></div></div>
+  <div class="abs" style="left:0;right:0;top:572px;text-align:center;animation:fadeUp .6s var(--e) 3.8s both"><span class="chip bluec">Claude Code builds the app · ShipPilot takes it from there</span></div>
+</div>
+
+<!-- 2 · APP (5.0–11.4) -->
+<div class="scene" style="animation:sceneIO 6.4s linear 5s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 5.3s both">…becomes an app<small>Pocket Words · iOS and Android</small></div>
+  <div class="abs" style="left:330px;top:160px;animation:inL .9s var(--e) 5.4s both">
+    <div class="phone"><div class="screen"><div class="notch"></div>
+      <div class="appbar">Today's puzzle<small>Day 1 · 6 tries</small></div>
+      <div class="grid">
+        <div class="t g" style="animation:pop .4s var(--spring) 6.2s both">W</div><div class="t n" style="animation:pop .4s var(--spring) 6.32s both">O</div><div class="t y" style="animation:pop .4s var(--spring) 6.44s both">R</div><div class="t n" style="animation:pop .4s var(--spring) 6.56s both">D</div><div class="t g" style="animation:pop .4s var(--spring) 6.68s both">S</div>
+        <div class="t g" style="animation:pop .4s var(--spring) 7.1s both">W</div><div class="t g" style="animation:pop .4s var(--spring) 7.22s both">R</div><div class="t y" style="animation:pop .4s var(--spring) 7.34s both">I</div><div class="t g" style="animation:pop .4s var(--spring) 7.46s both">T</div><div class="t g" style="animation:pop .4s var(--spring) 7.58s both">S</div>
+        <div class="t g" style="animation:pop .4s var(--spring) 8.0s both">W</div><div class="t g" style="animation:pop .4s var(--spring) 8.12s both">R</div><div class="t g" style="animation:pop .4s var(--spring) 8.24s both">I</div><div class="t g" style="animation:pop .4s var(--spring) 8.36s both">T</div><div class="t g" style="animation:pop .4s var(--spring) 8.48s both">E</div>
+        <div class="t e"></div><div class="t e"></div><div class="t e"></div><div class="t e"></div><div class="t e"></div>
+      </div>
+      <div class="keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div></div>
+  </div>
+  <div class="abs" style="left:714px;top:160px;animation:inR .9s var(--e) 5.6s both">
+    <div class="phone" style="border-radius:38px"><div class="screen" style="border-radius:28px"><div class="punch"></div>
+      <div class="appbar">Pocket Words<small>Good morning!</small></div>
+      <div class="list">
+        <div class="li" style="animation:fadeUp .5s var(--e) 6.6s both">🧩 Today's puzzle <b>Play</b></div>
+        <div class="li" style="animation:fadeUp .5s var(--e) 6.9s both">🔥 Streak <b>3 days</b></div>
+        <div class="li" style="animation:fadeUp .5s var(--e) 7.2s both">🏆 Friends <b>#2</b></div>
+        <div class="li" style="animation:fadeUp .5s var(--e) 7.5s both">📚 New words <b>+12</b></div>
+      </div>
+    </div></div>
+  </div>
+  <div class="abs" style="left:310px;top:700px"></div>
+</div>
+
+<!-- 3 · CI/CD (11.0–18.4) -->
+<div class="scene" style="animation:sceneIO 7.4s linear 11s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 11.3s both">Tested and released for you<small>Every change runs the same pipeline</small></div>
+  <div class="wire" style="left:226px;top:395px;width:62px"><i style="animation:grow .5s linear 12.4s both"></i></div>
+  <div class="wire" style="left:466px;top:395px;width:62px"><i style="animation:grow .5s linear 13.4s both"></i></div>
+  <div class="wire" style="left:706px;top:395px;width:62px"><i style="animation:grow .5s linear 14.4s both"></i></div>
+  <div class="wire" style="left:946px;top:395px;width:62px"><i style="animation:grow .5s linear 15.9s both"></i></div>
+  <div class="abs card node" style="left:50px;top:314px;animation:fadeUp .6s var(--e) 11.5s both"><div class="em">📝</div><div class="nm">Commit</div><div class="st">v1.0.0</div>
+    <div class="ok" style="animation:pop .5s var(--spring) 12.0s both">✓</div></div>
+  <div class="abs card node" style="left:290px;top:314px;animation:fadeUp .6s var(--e) 11.65s both"><div class="em">🔨</div><div class="nm">Build</div><div class="st">iOS + Android</div>
+    <div class="ok" style="animation:pop .5s var(--spring) 13.0s both">✓</div></div>
+  <div class="abs card node" style="left:530px;top:314px;animation:fadeUp .6s var(--e) 11.8s both"><div class="em">🧪</div><div class="nm">Tests</div>
+    <div class="st"><span class="cnt" style="animation:cntTests .8s linear 13.2s both"></span> / 38 passed</div>
+    <div class="ok" style="animation:pop .5s var(--spring) 14.0s both">✓</div></div>
+  <div class="abs card node" style="left:770px;top:314px;animation:fadeUp .6s var(--e) 11.95s both"><div class="em">👤</div><div class="nm">Your approval</div>
+    <div class="chip dark" style="font-size:15px;padding:6px 14px;animation:fadeIn .3s ease 14.6s both, press .35s ease 15.0s both, fadeOut .2s ease 15.35s forwards">Approve release</div>
+    <div class="ok" style="animation:pop .5s var(--spring) 15.4s both">✓</div></div>
+  <div class="abs card node" style="left:1010px;top:314px;width:220px;animation:fadeUp .6s var(--e) 12.1s both"><div class="em">🚀</div><div class="nm">Upload</div>
+    <div class="bar" style="width:150px"><i style="background:#2563eb;animation:grow 1.3s ease-in-out 16.3s both"></i></div>
+    <div class="ok" style="animation:pop .5s var(--spring) 17.6s both">✓</div></div>
+  <div class="abs" style="left:770px;top:500px;width:176px;text-align:center;animation:fadeUp .5s var(--e) 15.5s both"><span class="chip green" style="font-size:17px">Approved by you ✓</span></div>
+</div>
+
+<!-- 4 · STORES (18.0–26.4) -->
+<div class="scene" style="animation:sceneIO 8.4s linear 18s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 18.3s both">Live on both stores<small>App Store and Google Play, one release</small></div>
+  <div class="abs" style="left:0;top:0;right:0;bottom:0;animation:fadeOut .5s ease 22.3s forwards">
+    <div class="abs card console" style="left:90px;top:200px;animation:inL .8s var(--e) 18.5s both">
+      <div class="chead"><div class="glyph" style="background:linear-gradient(140deg,#60a5fa,#2563eb)"></div>App Store Connect</div>
+      <div class="crow"><div class="icon s"><span>P</span><span>W</span><span>O</span><span>R</span></div><div><div class="nm">Pocket Words</div><div class="vr">iOS App · Version 1.0</div></div></div>
+      <div class="bar" style="margin:0 22px 18px"><i style="background:#2563eb;animation:grow 1.2s ease-in-out 18.9s both"></i></div>
+      <div class="stack">
+        <span class="chip amber" style="animation:fadeIn .3s ease 19.0s both, fadeOut .3s ease 19.9s forwards">⏳ Processing</span>
+        <span class="chip bluec" style="animation:fadeIn .3s ease 20.0s both, fadeOut .3s ease 20.9s forwards">🔍 In review</span>
+        <span class="chip green" style="animation:pop .5s var(--spring) 21.0s both">✓ Ready for Distribution</span>
+      </div>
+    </div>
+    <div class="abs card console" style="left:670px;top:200px;animation:inR .8s var(--e) 18.6s both">
+      <div class="chead"><div class="glyph" style="background:linear-gradient(140deg,#4ade80,#16a34a)"></div>Google Play Console</div>
+      <div class="crow"><div class="icon s"><span>P</span><span>W</span><span>O</span><span>R</span></div><div><div class="nm">Pocket Words</div><div class="vr">Production · 1.0 (1)</div></div></div>
+      <div class="bar" style="margin:0 22px 18px"><i style="background:#16a34a;animation:grow 1.2s ease-in-out 19.1s both"></i></div>
+      <div class="stack">
+        <span class="chip amber" style="animation:fadeIn .3s ease 19.2s both, fadeOut .3s ease 20.1s forwards">⬆ Uploading</span>
+        <span class="chip bluec" style="animation:fadeIn .3s ease 20.2s both, fadeOut .3s ease 21.1s forwards">🔍 In review</span>
+        <span class="chip green" style="animation:pop .5s var(--spring) 21.2s both">✓ Available on Google Play</span>
+      </div>
+    </div>
+  </div>
+  <!-- store pages -->
+  <div class="abs" style="left:330px;top:160px;animation:fadeUp .8s var(--e) 22.6s both">
+    <div class="phone"><div class="screen"><div class="notch"></div><div class="storepage">
+      <div style="font-size:12px;font-weight:800;color:#2563eb;margin-bottom:8px">App Store</div>
+      <div class="sp-top"><div class="icon s"><span>P</span><span>W</span><span>O</span><span>R</span></div>
+        <div><div class="sp-title">Pocket Words</div><div class="sp-sub">One new word puzzle a day</div><span class="get" style="animation:pulse .6s ease 24.4s 2 both">GET</span></div></div>
+      <div class="stars"><span>4.8 ★★★★★</span><span>#12 Word</span><span>4+</span></div>
+      <div class="shots" style="animation:inFromR 1s var(--e) 23.3s both">
+        <div class="shot"><p>Daily puzzle</p><div class="grid"><i class="t g"></i><i class="t y"></i><i class="t g"></i><i class="t n"></i><i class="t g"></i></div></div>
+        <div class="shot" style="background:linear-gradient(170deg,#fef3c7,#fde68a)"><p>Keep your streak</p></div>
+        <div class="shot" style="background:linear-gradient(170deg,#dcfce7,#bbf7d0)"><p>Play with friends</p></div>
+      </div>
+    </div></div></div>
+  </div>
+  <div class="abs" style="left:714px;top:160px;animation:fadeUp .8s var(--e) 22.8s both">
+    <div class="phone" style="border-radius:38px"><div class="screen" style="border-radius:28px"><div class="punch"></div><div class="storepage">
+      <div style="font-size:12px;font-weight:800;color:#15803d;margin-bottom:8px">Google Play</div>
+      <div class="sp-top"><div class="icon s"><span>P</span><span>W</span><span>O</span><span>R</span></div>
+        <div><div class="sp-title">Pocket Words</div><div class="sp-sub">MB Worldwide Apps</div></div></div>
+      <span class="install" style="animation:pulse .6s ease 24.6s 2 both">Install</span>
+      <div class="stars"><span>4.7 ★</span><span>10K+ downloads</span><span>E</span></div>
+      <div class="shots" style="animation:inFromR 1s var(--e) 23.5s both">
+        <div class="shot"><p>Daily puzzle</p><div class="grid"><i class="t g"></i><i class="t g"></i><i class="t y"></i><i class="t g"></i><i class="t n"></i></div></div>
+        <div class="shot" style="background:linear-gradient(170deg,#fef3c7,#fde68a)"><p>Keep your streak</p></div>
+        <div class="shot" style="background:linear-gradient(170deg,#dcfce7,#bbf7d0)"><p>Play with friends</p></div>
+      </div>
+    </div></div></div>
+  </div>
+</div>
+
+<!-- 5 · CAMPAIGNS (26.0–33.4) -->
+<div class="scene" style="animation:sceneIO 7.4s linear 26s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 26.3s both">Campaigns, ready to run<small>Ads written from what the app really does</small></div>
+  <div class="ad" style="left:250px;top:166px;background:linear-gradient(170deg,#7c3aed,#db2777);color:#fff;transform-origin:bottom center;animation:inL .9s var(--e) 26.6s both">
+    <div class="adhead"><div class="av"></div>pocketwords · Sponsored</div>
+    <div class="adt" style="margin-top:40px">One fresh word puzzle every morning</div>
+    <div class="abs" style="left:60px;top:220px;width:130px;height:130px;border-radius:24px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:60px">🧩</div>
+    <div class="cta" style="background:#fff;color:#7c3aed">Install now</div>
+    <div class="plat">Meta · Story</div>
+  </div>
+  <div class="ad card" style="left:515px;top:166px;background:#fff;animation:fadeUp .9s var(--e) 26.9s both">
+    <div class="adhead" style="color:#64748b"><span class="chip" style="font-size:12px;padding:2px 8px;background:#fef9c3;color:#854d0e">Ad</span>Google Play</div>
+    <div style="padding:20px 16px;display:flex;gap:14px;align-items:center"><div class="icon s"><span>P</span><span>W</span><span>O</span><span>R</span></div><div style="font-weight:800;font-size:19px">Pocket Words<div style="font-size:13px;color:#64748b">★ 4.7 · Free</div></div></div>
+    <div class="adt" style="font-size:24px">5 minutes a day.<br>New words for life.</div>
+    <div class="abs" style="left:16px;right:16px;top:280px;height:70px;border-radius:14px;background:linear-gradient(90deg,#dbeafe,#ede9fe)"></div>
+    <div class="cta" style="background:#15803d;color:#fff">Install</div>
+    <div class="plat">Google Ads</div>
+  </div>
+  <div class="ad" style="left:780px;top:166px;background:#0b0b0f;color:#fff;animation:inR .9s var(--e) 27.2s both">
+    <div class="abs" style="inset:0;border-radius:26px;background:radial-gradient(circle at 50% 35%,#334155,#0b0b0f 70%)"></div>
+    <div class="abs" style="left:60px;top:90px;width:130px;height:130px;border-radius:24px;background:#1e293b;display:grid;place-items:center;font-size:64px">🔤</div>
+    <div class="abs" style="right:12px;top:170px;display:flex;flex-direction:column;gap:18px;font-size:28px">❤️<span>💬</span><span>↗️</span></div>
+    <div class="abs" style="left:16px;right:60px;top:280px;font-weight:800;font-size:17px;line-height:1.3">POV: 12 new words before coffee ☕</div>
+    <div class="cta" style="background:#fe2c55;color:#fff">Download</div>
+    <div class="plat" style="color:#334155">TikTok · In-feed</div>
+  </div>
+  <div class="abs card" style="left:380px;top:606px;width:600px;height:58px;display:flex;align-items:center;gap:18px;padding:0 22px;animation:fadeUp .6s var(--e) 29.3s both">
+    <span style="font-weight:800;font-size:20px">Daily budget $<span class="cnt" style="animation:cntBudget .8s ease-out 29.6s both"></span></span>
+    <div class="toggle" style="animation:toggleOn .3s ease 30.6s both"><i style="animation:knob .3s var(--spring) 30.6s both"></i></div>
+    <span class="chip green" style="font-size:18px;animation:pop .5s var(--spring) 30.9s both">Approved by you ✓</span>
+  </div>
+</div>
+
+<!-- 6 · RESULTS (33.0–39.4) -->
+<div class="scene" style="animation:sceneIO 6.4s linear 33s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 33.3s both">Results show what to fix<small>Ads and in-app behaviour, side by side</small></div>
+  <div class="abs card" style="left:80px;top:190px;width:520px;height:420px;padding:26px;animation:inL .8s var(--e) 33.5s both">
+    <div style="display:flex;gap:40px"><div class="kpi">Installs<b><span class="cnt" style="animation:cntInstalls 1.6s ease-out 33.9s both"></span></b></div><div class="kpi">Cost / install<b>$0.66</b></div></div>
+    <svg width="468" height="250" style="margin-top:18px">
+      <g stroke="#e2e8f0" stroke-width="2"><line x1="0" y1="60" x2="468" y2="60"/><line x1="0" y1="130" x2="468" y2="130"/><line x1="0" y1="200" x2="468" y2="200"/></g>
+      <path d="M0,220 C60,210 90,190 140,170 S230,120 280,110 S380,60 468,40" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="900" style="animation:draw 1.8s ease-out 33.9s both"/>
+    </svg>
+  </div>
+  <div class="abs card" style="left:640px;top:190px;width:560px;height:420px;padding:26px;animation:inR .8s var(--e) 33.6s both">
+    <div style="font-size:20px;font-weight:800;margin-bottom:6px">New users · first day</div>
+    <div class="fn"><span class="lbl">Installed</span><div class="bar"><span>100%</span><i style="background:#2563eb;animation:grow .7s var(--e) 34.2s both"></i></div></div>
+    <div class="fn"><span class="lbl">Finished tutorial</span><div class="bar" style="animation:ring .9s ease-out 36.2s 3 both"><span>52%</span><i style="right:48%;background:#dc2626;animation:grow .7s var(--e) 34.6s both"></i></div></div>
+    <div class="fn"><span class="lbl">Came back day 2</span><div class="bar"><span>31%</span><i style="right:69%;background:#64748b;animation:grow .7s var(--e) 35.0s both"></i></div></div>
+    <div style="margin-top:22px;animation:pop .6s var(--spring) 36.3s both"><span class="chip redc" style="font-size:22px">⚠ 48% leave at the tutorial</span></div>
+  </div>
+</div>
+
+<!-- 7 · IMPROVE & SHIP AGAIN (39.0–46.4) -->
+<div class="scene" style="animation:sceneIO 7.4s linear 39s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 39.3s both">Better app, shipped again<small>Skip the tutorial, start with today's puzzle</small></div>
+  <div class="abs" style="left:120px;top:166px;animation:fadeUp .8s var(--e) 39.4s both">
+    <div class="phone" style="animation:glow 1.2s ease 40.6s both"><div class="screen"><div class="notch"></div>
+      <div class="abs" style="inset:0;padding-top:50px;animation:outL .6s var(--e) 40.1s forwards">
+        <div class="appbar">How to play<small>Step 1 of 4</small></div>
+        <div class="list"><div class="li">1 · Guess a 5-letter word</div><div class="li">2 · Green = right spot</div><div class="li">3 · Yellow = wrong spot</div>
+          <div class="li" style="background:#2563eb;color:#fff;justify-content:center">Next →</div></div>
+      </div>
+      <div class="abs" style="inset:0;animation:inFromR .6s var(--e) 40.2s both">
+        <div class="appbar">Today's puzzle<small>Tap a letter to start</small></div>
+        <div class="grid"><div class="t g">W</div><div class="t y">O</div><div class="t n">R</div><div class="t g">D</div><div class="t n">S</div>
+          <div class="t e"></div><div class="t e"></div><div class="t e"></div><div class="t e"></div><div class="t e"></div></div>
+        <div class="keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div></div>
+    <div class="abs" style="left:82px;top:-46px"><span class="chip dark" style="animation:fadeOut .2s ease 40.9s forwards">v1.0</span></div>
+    <div class="abs" style="left:82px;top:-46px"><span class="chip green" style="animation:pop .5s var(--spring) 41.0s both">v1.1</span></div>
+  </div>
+  <!-- compact pipeline -->
+  <div class="abs card" style="left:450px;top:200px;width:780px;height:150px;padding:24px 22px;animation:fadeUp .6s var(--e) 41.0s both">
+    <div style="font-weight:800;font-size:19px;color:#475569;margin-bottom:16px">Same pipeline, v1.1</div>
+    <div class="mini" style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px;color:#94a3b8">
+      <span class="chip green" style="animation:pop .4s var(--spring) 41.4s both">📝 Commit</span>→
+      <span class="chip green" style="animation:pop .4s var(--spring) 41.9s both">🔨 Build</span>→
+      <span class="chip green" style="animation:pop .4s var(--spring) 42.4s both">🧪 Tests</span>→
+      <span class="chip dark" style="animation:pop .4s var(--spring) 43.0s both">👤 Approved by you ✓</span>→
+      <span class="chip green" style="animation:pop .4s var(--spring) 43.6s both">🚀 Upload</span>
+    </div>
+  </div>
+  <div class="abs" style="left:450px;top:390px;display:flex;gap:24px">
+    <div class="card" style="width:358px;padding:22px;display:flex;align-items:center;gap:14px;animation:fadeUp .6s var(--e) 44.1s both">
+      <div class="glyph" style="background:linear-gradient(140deg,#60a5fa,#2563eb)"></div><div style="font-weight:800;font-size:20px">App Store</div>
+      <span class="chip green" style="margin-left:auto;animation:pop .5s var(--spring) 44.5s both">Live · v1.1</span></div>
+    <div class="card" style="width:358px;padding:22px;display:flex;align-items:center;gap:14px;animation:fadeUp .6s var(--e) 44.3s both">
+      <div class="glyph" style="background:linear-gradient(140deg,#4ade80,#16a34a)"></div><div style="font-weight:800;font-size:20px">Google Play</div>
+      <span class="chip green" style="margin-left:auto;animation:pop .5s var(--spring) 44.8s both">Live · v1.1</span></div>
+  </div>
+</div>
+
+<!-- 8 · RE-MEASURE (46.0–50.4) -->
+<div class="scene" style="animation:sceneIO 4.4s linear 46s both">
+  <div class="cap" style="animation:fadeUp .7s var(--e) 46.2s both">⏱ 7 days later · re-measured<small>Same question, same window</small></div>
+  <div class="abs card" style="left:240px;top:210px;width:800px;padding:34px 40px;animation:fadeUp .7s var(--e) 46.5s both">
+    <div style="font-size:22px;font-weight:800;margin-bottom:10px">Finished tutorial / first puzzle</div>
+    <div class="fn"><span class="lbl">v1.0</span><div class="bar"><span>52%</span><i style="right:48%;background:#94a3b8;animation:grow .7s var(--e) 46.9s both"></i></div></div>
+    <div class="fn"><span class="lbl">v1.1</span><div class="bar"><span>71%</span><i style="right:29%;background:#16a34a;animation:grow .9s var(--e) 47.4s both"></i></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
+      <span class="chip green" style="font-size:22px;animation:pop .5s var(--spring) 48.3s both">+19 points · keep the change</span>
+      <span class="chip bluec" style="animation:fadeIn .5s ease 48.8s both">↺ next loop</span>
+    </div>
+  </div>
+</div>
+
+<!-- 9 · OUTRO (50.0–54.5) -->
+<div class="scene" style="animation:sceneIn .5s linear 50s both">
+  <div class="abs" style="left:0;right:0;top:150px;display:flex;flex-direction:column;align-items:center;gap:18px">
+    <div style="display:flex;align-items:center;gap:20px;animation:pop .8s var(--spring) 50.2s both">
+      <div class="icon" style="width:96px;height:96px;border-radius:24px;padding:16px;gap:6px;background:linear-gradient(140deg,#0ea5e9,#2563eb 55%,#7c3aed)"><span>S</span><span>H</span><span>I</span><span>P</span></div>
+      <div style="font-size:76px;font-weight:900;letter-spacing:-2px">ShipPilot</div></div>
+    <div style="font-size:32px;font-weight:700;color:#334155;animation:fadeUp .6s var(--e) 50.7s both">From idea to growth — inside Claude Code</div>
+    <div style="font-size:24px;font-weight:600;color:#64748b;animation:fadeUp .6s var(--e) 51.0s both">You approve every release and every ad dollar.</div>
+    <div class="card" style="margin-top:14px;padding:16px 26px;font-family:Menlo,monospace;font-size:24px;animation:fadeUp .6s var(--e) 51.4s both">/plugin marketplace add ufukyuksel-dev/shippilot</div>
+    <div style="font-size:24px;font-weight:800;color:#2563eb;animation:fadeUp .6s var(--e) 51.8s both">github.com/ufukyuksel-dev/shippilot</div>
+  </div>
+</div>
+
+<div class="label">Illustrative demo · sample numbers</div>
+<div class="brand"><div class="icon s" style="width:34px;height:34px;border-radius:9px;padding:6px;gap:2px;background:linear-gradient(140deg,#0ea5e9,#2563eb 55%,#7c3aed)"><span style="font-size:0"></span><span style="font-size:0"></span><span style="font-size:0"></span><span style="font-size:0"></span></div>ShipPilot</div>
+</body>
+</html>
