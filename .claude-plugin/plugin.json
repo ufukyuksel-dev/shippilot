@@ -1,0 +1,13 @@
+{
+  "name": "shippilot",
+  "description": "Build, ship and grow mobile apps with Claude Code: Fastlane releases, store listings, Android device QA, Google/Meta/TikTok ads and a measured growth loop, all behind explicit approval gates.",
+  "version": "0.1.0",
+  "author": {
+    "name": "MB Worldwide Apps",
+    "url": "https://mbworldwideapps.com"
+  },
+  "homepage": "https://github.com/ufukyuksel-dev/shippilot",
+  "repository": "https://github.com/ufukyuksel-dev/shippilot",
+  "license": "MIT",
+  "keywords": ["mobile", "fastlane", "app-store", "google-play", "aso", "ads", "growth", "mcp"]
+}

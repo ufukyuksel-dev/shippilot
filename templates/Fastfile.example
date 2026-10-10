@@ -1,0 +1,31 @@
+# Example Fastfile for the ShipPilot beta flow. Copy into fastlane/Fastfile and adapt names.
+# Secrets come from the environment or your CI secret store; never commit keys.
+#   APP_STORE_CONNECT_API_KEY_PATH  path to an App Store Connect API key JSON (fastlane format)
+#   PLAY_JSON_KEY_PATH              path to a Google Play service account JSON
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload a beta build to TestFlight (no store metadata, no review submission)"
+  lane :beta do
+    api_key = app_store_connect_api_key(key_filepath: ENV.fetch("APP_STORE_CONNECT_API_KEY_PATH"))
+    increment_build_number(build_number: latest_testflight_build_number(api_key: api_key) + 1)
+    build_app(scheme: "App", export_method: "app-store")
+    upload_to_testflight(api_key: api_key, skip_waiting_for_build_processing: true)
+  end
+end
+
+platform :android do
+  desc "Build and upload a beta build to the Play internal track (binary only)"
+  lane :beta do
+    gradle(task: "bundle", build_type: "Release")
+    upload_to_play_store(
+      track: "internal",
+      json_key: ENV.fetch("PLAY_JSON_KEY_PATH"),
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true
+    )
+  end
+end
