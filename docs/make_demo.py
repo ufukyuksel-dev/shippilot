@@ -28,9 +28,11 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "docs" / "assets"
 MOTION = ROOT / "docs" / "video" / "motion.html"
+# MP4s are release assets, not repository files (directory rules hold non-image binaries); they are written here.
+BUILD = ROOT / "build"
 # Bump when the media changes: GitHub caches images by URL, so a new file name is what makes READMEs show it.
 MEDIA_VERSION = "v3"
-DEMO_MP4, DEMO_GIF, FLOW_PNG = (ASSETS / f"demo-{MEDIA_VERSION}.mp4", ASSETS / f"demo-{MEDIA_VERSION}.gif",
+DEMO_MP4, DEMO_GIF, FLOW_PNG = (BUILD / f"demo-{MEDIA_VERSION}.mp4", ASSETS / f"demo-{MEDIA_VERSION}.gif",
                                 ASSETS / f"flow-{MEDIA_VERSION}.png")
 W, H = 1280, 720
 # Chrome's own sandbox cannot start inside some sandboxed runners; only local files from this repo are rendered.
@@ -91,6 +93,16 @@ def flow_page() -> str:
 
 
 SOCIAL_PNG = ASSETS / "social-v1.png"
+ICON_PNG = ASSETS / "icon.png"
+
+
+def icon_page() -> str:
+    """512x512 plugin icon (directory listing)."""
+    return """<!doctype html><html><head><style>* { margin: 0; } html, body { width: 512px; height: 512px; background: transparent; }
+    .i { width: 512px; height: 512px; border-radius: 116px; background: linear-gradient(140deg, #0ea5e9, #2563eb 55%, #7c3aed);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 34px; padding: 84px; box-sizing: border-box; }
+    .i span { background: #fff; border-radius: 30px; display: grid; place-items: center; font: 900 104px -apple-system, "Helvetica Neue", Arial, sans-serif; color: #4c1d95; }
+    </style></head><body><div class="i"><span>S</span><span>H</span><span>I</span><span>P</span></div></body></html>"""
 
 
 def social_page() -> str:
@@ -163,7 +175,7 @@ def capture(browser, load, fps: int, mp4: Path, gif: Path, poster: "tuple[float,
 
 
 # ---------------------------------------------------------------- real run (terminal, real commands, real output)
-REAL_MP4, REAL_GIF = ASSETS / "real-run-v1.mp4", ASSETS / "real-run-v1.gif"
+REAL_MP4, REAL_GIF = BUILD / "real-run-v1.mp4", ASSETS / "real-run-v1.gif"
 
 
 def run(cmd: "list[str]", cwd: Path) -> "tuple[str, int]":
@@ -248,6 +260,7 @@ def main() -> int:
         print("ERROR: ffmpeg not found", file=sys.stderr)
         return 2
     ASSETS.mkdir(parents=True, exist_ok=True)
+    BUILD.mkdir(parents=True, exist_ok=True)
     info = json.loads((ASSETS / "demo.json").read_text()) if (ASSETS / "demo.json").exists() else {}
     with sync_playwright() as pw:
         browser = pw.chromium.launch(channel="chrome", headless=True, args=CHROME_ARGS)
@@ -258,7 +271,10 @@ def main() -> int:
             card = browser.new_page(viewport={"width": 1280, "height": 640})
             card.set_content(social_page())
             card.screenshot(path=str(SOCIAL_PNG))
-            print(f"OK: {FLOW_PNG.name}, {SOCIAL_PNG.name}")
+            icon = browser.new_page(viewport={"width": 512, "height": 512})
+            icon.set_content(icon_page())
+            icon.screenshot(path=str(ICON_PNG), omit_background=True)
+            print(f"OK: {FLOW_PNG.name}, {SOCIAL_PNG.name}, {ICON_PNG.name}")
         elif not args.only_real_run:
             info["seconds"] = capture(browser, lambda pg: pg.goto(MOTION.as_uri()), args.fps, DEMO_MP4, DEMO_GIF,
                                       (23.6, ASSETS / "poster.png"))  # both store pages on screen

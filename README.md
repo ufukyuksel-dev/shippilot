@@ -14,7 +14,7 @@ You approve every release and every ad dollar.
 
 <img src="docs/assets/demo-v3.gif" alt="Motion demo: an idea becomes an app, passes CI, goes live on the App Store and Google Play, gets ad campaigns, results show a drop at the tutorial, the app is changed and shipped again, then re-measured" width="800">
 
-<sub>54-second motion demo · [MP4](docs/assets/demo-v3.mp4) · illustrative, with sample numbers · rendered from
+<sub>54-second motion demo · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.0/demo-v3.mp4) · illustrative, with sample numbers · rendered from
 [`docs/video/motion.html`](docs/video/motion.html)</sub>
 
 <img src="docs/assets/flow-v3.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
@@ -37,7 +37,7 @@ You approve every release and every ad dollar.
 <img src="docs/assets/real-run-v1.gif" alt="Real terminal run: store metadata checks pass for 5 locales on iOS and Android, then the public App Store listing is fetched" width="800">
 
 <sub>Real output, not a mock-up: the checker on the live app **Wordfall** (5 locales, iOS and Android) and
-`fetch_listing.py` on its public App Store page · [MP4](docs/assets/real-run-v1.mp4).
+`fetch_listing.py` on its public App Store page · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.0/real-run-v1.mp4).
 Full audit generated from live store data: [docs/examples/audit-wordfall.md](docs/examples/audit-wordfall.md).</sub>
 
 ## Install
@@ -144,6 +144,19 @@ requirement is missing, the skill says exactly what is missing and stops at that
 - **Measured, not claimed:** sample sizes, windows and decision rules are stated; correlation is labelled as
   correlation.
 
+## What ShipPilot runs and connects to
+
+| Part | Runs / fetches | Sends |
+|---|---|---|
+| `scripts/check_metadata.py` | Reads your local `fastlane/metadata` files | Nothing |
+| `scripts/fetch_listing.py` (used by `/shippilot:audit`) | `GET https://itunes.apple.com/lookup?id=…&country=…` or the public `https://play.google.com/store/apps/details?id=…` page | The app id and region in that request; no cookies, no account |
+| `/shippilot:beta`, release skill | Your Fastlane lanes, after you approve | To Apple / Google with **your** credentials |
+| Ads skills, `/shippilot:ads-report` | The ads MCP servers **you** connect | To those ad platforms with **your** credentials; mutations only after approval |
+| `/shippilot:grow` | Your analytics source | Reads only |
+| `docs/make_demo.py` | Maintainer tool for the README media (Playwright + ffmpeg); not used by the plugin | Nothing |
+
+No telemetry, no analytics, no server of ours. See [PRIVACY.md](PRIVACY.md).
+
 ## Metadata checker
 
 Also usable without Claude, in CI or a pre-commit hook (Python 3.9+, no dependencies):
@@ -205,7 +218,7 @@ improving it.
 
 ## Community
 
-[Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) ·
+[Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) · [Privacy](PRIVACY.md) ·
 [Roadmap](ROADMAP.md) · [Discussions](https://github.com/ufukyuksel-dev/shippilot/discussions)
 
 ## License

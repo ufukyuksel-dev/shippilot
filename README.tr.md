@@ -13,7 +13,7 @@ Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 
 <img src="docs/assets/demo-v3.gif" alt="Motion demo: fikir uygulamaya dönüşüyor, CI'dan geçiyor, App Store ve Google Play'de yayına giriyor, kampanyalar çalışıyor, sonuçlara göre uygulama değişip yeniden yayımlanıyor" width="800">
 
-<sub>54 saniyelik motion demo · [MP4](docs/assets/demo-v3.mp4) · temsilî, örnek sayılarla</sub>
+<sub>54 saniyelik motion demo · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.0/demo-v3.mp4) · temsilî, örnek sayılarla</sub>
 
 <img src="docs/assets/flow-v3.png" alt="Altı aşama" width="800">
 

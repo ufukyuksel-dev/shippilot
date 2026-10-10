@@ -9,5 +9,19 @@
   "homepage": "https://github.com/ufukyuksel-dev/shippilot",
   "repository": "https://github.com/ufukyuksel-dev/shippilot",
   "license": "MIT",
-  "keywords": ["mobile", "fastlane", "app-store", "google-play", "aso", "ads", "growth", "mcp"]
+  "keywords": [
+    "mobile",
+    "fastlane",
+    "app-store",
+    "google-play",
+    "aso",
+    "ads",
+    "growth",
+    "mcp"
+  ],
+  "displayName": "ShipPilot",
+  "icon": "./docs/assets/icon.png",
+  "documentationUrl": "https://github.com/ufukyuksel-dev/shippilot#readme",
+  "supportUrl": "https://github.com/ufukyuksel-dev/shippilot/issues",
+  "privacyPolicyUrl": "https://github.com/ufukyuksel-dev/shippilot/blob/main/PRIVACY.md"
 }

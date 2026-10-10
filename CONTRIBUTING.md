@@ -18,3 +18,10 @@ because…").
 - Never commit credentials, account IDs or machine-specific paths. Examples use made-up apps.
 - Keep the approval gates: a change that lets the plugin upload, publish or spend without an explicit user decision
   will not be merged.
+
+## README media
+
+`python3 docs/make_demo.py` renders the motion demo, the flow graphic, the social preview and the icon
+(`--real-run-repo <app repo>` adds the real-run clip). GIFs and PNGs go to `docs/assets/`; MP4s go to `build/` and
+are attached to the GitHub release (`gh release upload <tag> build/*.mp4`), not committed. When media change, bump
+`MEDIA_VERSION` and the README image paths together, because GitHub caches images by URL.
