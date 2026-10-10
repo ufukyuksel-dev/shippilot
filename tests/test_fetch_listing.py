@@ -45,9 +45,11 @@ class ParseUrlTest(unittest.TestCase):
 
     def test_play_forms(self):
         self.assertEqual(fl.parse_url("https://play.google.com/store/apps/details?id=com.example.app"),
-                         ("android", "com.example.app", "en_US"))
+                         ("android", "com.example.app", "en/US"))
         self.assertEqual(fl.parse_url("https://play.google.com/store/apps/details?id=a.b&hl=de&gl=DE"),
-                         ("android", "a.b", "de_DE"))
+                         ("android", "a.b", "de/DE"))
+        self.assertEqual(fl.parse_url("https://play.google.com/store/apps/details?id=a.b&hl=pt_BR&gl=US"),
+                         ("android", "a.b", "pt_BR/US"))
 
     def test_rejects_other_urls(self):
         for url in ("https://example.com/app/id1", "https://apps.apple.com/us/app/no-id",
@@ -81,6 +83,18 @@ class FetchTest(unittest.TestCase):
         self.assertIsNone(r["fields"]["full_description"])
         self.assertIn("full_description", r["missing"])
         self.assertEqual(r["lengths"]["title"]["limit"], 30)
+
+    def test_android_locale_with_underscore_keeps_hl_and_gl(self):
+        get = getter({"https://play.google.com/store/apps/details": PLAY_PAGE})
+        fl.fetch("https://play.google.com/store/apps/details?id=com.example.words&hl=pt_BR&gl=US", get)
+        self.assertEqual(get.calls, ["https://play.google.com/store/apps/details?id=com.example.words&hl=pt_BR&gl=US"])
+
+    def test_android_localized_title_suffix_is_removed(self):
+        for raw in ("Kelime Oyunu: Daily - Google Play'de Uygulamalar", "Kelime Oyunu: Daily \u2013 Apps no Google Play"):
+            page = PLAY_PAGE.replace("Pocket Words - Apps on Google Play", raw)
+            get = getter({"https://play.google.com/store/apps/details": page})
+            r = fl.fetch("https://play.google.com/store/apps/details?id=com.example.words&hl=tr", get)
+            self.assertEqual(r["fields"]["title"], "Kelime Oyunu: Daily")
 
     def test_android_404(self):
         err = urllib.error.HTTPError("u", 404, "Not Found", {}, None)

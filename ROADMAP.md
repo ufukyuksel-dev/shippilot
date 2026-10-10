@@ -15,6 +15,7 @@ shipping real apps.
 - Rating-prompt and review-reply helpers
 
 ## Done
+- v0.3.1 — localized Google Play links (`hl=pt_BR`), localized title suffixes; directory listing fields, privacy page
 - v0.3 — `/shippilot:audit` for any public App Store / Google Play listing; real-run clip; community templates
 - v0.2 — six-stage flow, CI/CD release template, `/shippilot:ad-creatives`
 - v0.1 — skills, commands, store metadata checker

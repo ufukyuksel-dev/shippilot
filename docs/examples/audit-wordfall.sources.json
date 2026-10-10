@@ -46,7 +46,7 @@
     "app_id": "6761381016",
     "region": "us",
     "input_url": "https://apps.apple.com/us/app/id6761381016",
-    "fetched_at_utc": "2026-10-10T18:34:25+00:00",
+    "fetched_at_utc": "2026-10-10T18:48:32+00:00",
     "missing": [
       "in_app_purchases",
       "keywords",
@@ -79,9 +79,9 @@
     ],
     "platform": "android",
     "app_id": "game.wordfall.app",
-    "region": "en_US",
+    "region": "en/US",
     "input_url": "https://play.google.com/store/apps/details?id=game.wordfall.app",
-    "fetched_at_utc": "2026-10-10T18:34:26+00:00",
+    "fetched_at_utc": "2026-10-10T18:48:32+00:00",
     "missing": [
       "average_rating",
       "developer",

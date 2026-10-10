@@ -30,7 +30,7 @@ from typing import Callable, Dict, Optional, Tuple
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_metadata import LIMITS  # noqa: E402  (one source of truth for store limits)
 
-USER_AGENT = "Mozilla/5.0 (compatible; ShipPilot-audit/0.3; +https://github.com/ufukyuksel-dev/shippilot)"
+USER_AGENT = "Mozilla/5.0 (compatible; ShipPilot-audit/0.3.1; +https://github.com/ufukyuksel-dev/shippilot)"
 Fetch = Callable[[str], bytes]
 
 
@@ -45,7 +45,7 @@ def http_get(url: str) -> bytes:
 
 
 def parse_url(url: str) -> Tuple[str, str, str]:
-    """Return (platform, app_id, region) where region is the App Store country or the Play hl/gl pair."""
+    """Return (platform, app_id, region): the App Store country, or the Play pair as "<hl>/<gl>" (hl may be pt_BR)."""
     parsed = urllib.parse.urlparse(url.strip())
     host = parsed.netloc.lower()
     query = urllib.parse.parse_qs(parsed.query)
@@ -61,7 +61,7 @@ def parse_url(url: str) -> Tuple[str, str, str]:
             raise ListingError("Google Play URL without a valid package id (?id=com.example.app)")
         hl = (query.get("hl") or ["en"])[0]
         gl = (query.get("gl") or ["US"])[0]
-        return "android", package, f"{hl}_{gl}"
+        return "android", package, f"{hl}/{gl}"
     raise ListingError("unsupported URL: use an apps.apple.com or play.google.com/store/apps/details link")
 
 
@@ -132,8 +132,8 @@ class _MetaParser(HTMLParser):
 
 
 def fetch_android(package: str, region: str, get: Fetch) -> dict:
-    hl, gl = region.split("_", 1)
-    url = f"https://play.google.com/store/apps/details?id={package}&hl={hl}&gl={gl}"
+    hl, gl = region.split("/", 1)
+    url = "https://play.google.com/store/apps/details?" + urllib.parse.urlencode({"id": package, "hl": hl, "gl": gl})
     try:
         page = get(url).decode("utf-8", errors="replace")
     except urllib.error.HTTPError as exc:
@@ -143,7 +143,8 @@ def fetch_android(package: str, region: str, get: Fetch) -> dict:
     parser = _MetaParser()
     parser.feed(page)
     raw_title = parser.meta.get("og:title") or parser.title
-    title = re.sub(r"\s+-\s+Apps on Google Play\s*$", "", raw_title or "").strip() or None
+    # Strip the localized store suffix: "… - Apps on Google Play", "… – Apps no Google Play", "… - Google Play'de Uygulamalar".
+    title = re.sub(r"\s+[-\u2013\u2014]\s+[^-\u2013\u2014]*Google Play[^-\u2013\u2014]*$", "", raw_title or "").strip() or None
     fields = {
         "title": title,
         "short_description": None,

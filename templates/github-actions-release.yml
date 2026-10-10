@@ -29,7 +29,7 @@ permissions:
   contents: read
 
 env:
-  SHIPPILOT_REF: v0.2.0   # pin the checker to a ShipPilot release (or a commit SHA)
+  SHIPPILOT_REF: v0.3.1   # pin the checker to a ShipPilot release (or a commit SHA)
 
 jobs:
   test:

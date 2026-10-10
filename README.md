@@ -14,7 +14,7 @@ You approve every release and every ad dollar.
 
 <img src="docs/assets/demo-v3.gif" alt="Motion demo: an idea becomes an app, passes CI, goes live on the App Store and Google Play, gets ad campaigns, results show a drop at the tutorial, the app is changed and shipped again, then re-measured" width="800">
 
-<sub>54-second motion demo · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.0/demo-v3.mp4) · illustrative, with sample numbers · rendered from
+<sub>54-second motion demo · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.1/demo-v3.mp4) · illustrative, with sample numbers · rendered from
 [`docs/video/motion.html`](docs/video/motion.html)</sub>
 
 <img src="docs/assets/flow-v3.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
@@ -37,7 +37,7 @@ You approve every release and every ad dollar.
 <img src="docs/assets/real-run-v1.gif" alt="Real terminal run: store metadata checks pass for 5 locales on iOS and Android, then the public App Store listing is fetched" width="800">
 
 <sub>Real output, not a mock-up: the checker on the live app **Wordfall** (5 locales, iOS and Android) and
-`fetch_listing.py` on its public App Store page · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.0/real-run-v1.mp4).
+`fetch_listing.py` on its public App Store page · [MP4](https://github.com/ufukyuksel-dev/shippilot/releases/download/v0.3.1/real-run-v1.mp4).
 Full audit generated from live store data: [docs/examples/audit-wordfall.md](docs/examples/audit-wordfall.md).</sub>
 
 ## Install
@@ -73,8 +73,8 @@ subtitle and keywords, the full Play description) are reported as unknown, never
 Without the plugin, the fetcher alone gives you the raw data as JSON:
 
 ```sh
-curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.0/scripts/fetch_listing.py
-curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.0/scripts/check_metadata.py
+curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.1/scripts/fetch_listing.py
+curl -fsSLO https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/v0.3.1/scripts/check_metadata.py
 python3 fetch_listing.py "https://apps.apple.com/us/app/id6761381016"
 ```
 

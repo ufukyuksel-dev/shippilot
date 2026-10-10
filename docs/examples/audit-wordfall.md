@@ -12,8 +12,8 @@
 |---|---|---|
 | Input URL | https://apps.apple.com/us/app/id6761381016 | https://play.google.com/store/apps/details?id=game.wordfall.app |
 | Data source | `https://itunes.apple.com/lookup?id=6761381016&country=us` (public Lookup API) | `https://play.google.com/store/apps/details?id=game.wordfall.app&hl=en&gl=US` (public page, meta tags only) |
-| Fetched (UTC) | 2026-10-10T18:34:25+00:00 | 2026-10-10T18:34:26+00:00 |
-| Region | us | en_US |
+| Fetched (UTC) | 2026-10-10T18:48:32+00:00 | 2026-10-10T18:48:32+00:00 |
+| Region | us | en/US |
 | Missing / unknown | in_app_purchases, keywords, promotional_text, subtitle | average_rating, developer, full_description, screenshots, short_description |
 
 Known from the data: version 1.2.3 (released 2026-10-08), genre Games, price Free,
@@ -86,13 +86,13 @@ words already in the name; they are adapted per market, not translated word for 
 2. *"Dive for letters"* — Vurgun with the oxygen bar visible.
 3. *"Beat real players"* — a live Word Bomb round with the timer.
 4. *"Play in 5 languages"* — the word-language picker.
-5. *"Keep your streak"* — leaderboard or daily challenge progress.
+5. *"A new challenge every day"* — daily challenge progress and the leaderboard.
 
 ## 7. Three ad angles
 
 | Angle | Headline | Line | First screen after install |
 |---|---|---|---|
-| Daily habit | One word puzzle a day | Five minutes, new words, every morning. | Today's puzzle, no tutorial first |
+| Daily habit | One word puzzle a day | A new word puzzle every day, in five languages. | Today's puzzle, no tutorial first |
 | Competition | Beat real players at words | Live Word Bomb: make a word before time runs out. | Word Bomb lobby |
 | Language learners | Play in the language you're learning | English, Turkish, German, French or Spanish words. | Word-language picker |
 
