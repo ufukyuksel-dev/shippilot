@@ -11,11 +11,11 @@ Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 
 [English](README.md) · [Türkçe](README.tr.md)
 
-<img src="docs/assets/demo.gif" alt="Motion demo: fikir uygulamaya dönüşüyor, CI'dan geçiyor, App Store ve Google Play'de yayına giriyor, kampanyalar çalışıyor, sonuçlara göre uygulama değişip yeniden yayımlanıyor" width="800">
+<img src="docs/assets/demo-v3.gif" alt="Motion demo: fikir uygulamaya dönüşüyor, CI'dan geçiyor, App Store ve Google Play'de yayına giriyor, kampanyalar çalışıyor, sonuçlara göre uygulama değişip yeniden yayımlanıyor" width="800">
 
-<sub>54 saniyelik motion demo · [MP4](docs/assets/demo.mp4) · temsilî, örnek sayılarla</sub>
+<sub>54 saniyelik motion demo · [MP4](docs/assets/demo-v3.mp4) · temsilî, örnek sayılarla</sub>
 
-<img src="docs/assets/flow.png" alt="Altı aşama" width="800">
+<img src="docs/assets/flow-v3.png" alt="Altı aşama" width="800">
 
 </div>
 

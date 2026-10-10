@@ -12,12 +12,12 @@ You approve every release and every ad dollar.
 
 [English](README.md) · [Türkçe](README.tr.md)
 
-<img src="docs/assets/demo.gif" alt="Motion demo: an idea becomes an app, passes CI, goes live on the App Store and Google Play, gets ad campaigns, results show a drop at the tutorial, the app is changed and shipped again, then re-measured" width="800">
+<img src="docs/assets/demo-v3.gif" alt="Motion demo: an idea becomes an app, passes CI, goes live on the App Store and Google Play, gets ad campaigns, results show a drop at the tutorial, the app is changed and shipped again, then re-measured" width="800">
 
-<sub>54-second motion demo · [MP4](docs/assets/demo.mp4) · illustrative, with sample numbers · rendered from
+<sub>54-second motion demo · [MP4](docs/assets/demo-v3.mp4) · illustrative, with sample numbers · rendered from
 [`docs/video/motion.html`](docs/video/motion.html)</sub>
 
-<img src="docs/assets/flow.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
+<img src="docs/assets/flow-v3.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
 
 </div>
 

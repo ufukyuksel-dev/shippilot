@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Render the ShipPilot motion demo and the README flow graphic.
 
-  docs/video/motion.html  ->  docs/assets/demo.mp4 (30 fps), demo.gif (800 px), poster.png
-  flow_page() below       ->  docs/assets/flow.png
+  docs/video/motion.html  ->  docs/assets/demo-<MEDIA_VERSION>.mp4 (30 fps), demo-<MEDIA_VERSION>.gif (800 px), poster.png
+  flow_page() below       ->  docs/assets/flow-<MEDIA_VERSION>.png
+Bump MEDIA_VERSION and the README image paths together when the media changes.
 
 The motion demo is one HTML page whose CSS animations share a single timeline. Each frame is captured by pausing
 every animation at time t (Web Animations API), so the output is deterministic and never drops frames.
@@ -26,6 +27,10 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "docs" / "assets"
 MOTION = ROOT / "docs" / "video" / "motion.html"
+# Bump when the media changes: GitHub caches images by URL, so a new file name is what makes READMEs show it.
+MEDIA_VERSION = "v3"
+DEMO_MP4, DEMO_GIF, FLOW_PNG = (ASSETS / f"demo-{MEDIA_VERSION}.mp4", ASSETS / f"demo-{MEDIA_VERSION}.gif",
+                                ASSETS / f"flow-{MEDIA_VERSION}.png")
 W, H = 1280, 720
 # Chrome's own sandbox cannot start inside some sandboxed runners; only local files from this repo are rendered.
 CHROME_ARGS = ["--no-sandbox"]
@@ -112,19 +117,19 @@ def main() -> int:
 
         flow = browser.new_page(viewport={"width": 1200, "height": 620})
         flow.set_content(flow_page())
-        flow.screenshot(path=str(ASSETS / "flow.png"))
+        flow.screenshot(path=str(FLOW_PNG))
         browser.close()
 
         pattern = str(frames / "f%05d.png")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(args.fps), "-i", pattern, "-c:v", "libx264",
                         "-pix_fmt", "yuv420p", "-crf", "20", "-preset", "slow", "-movflags", "+faststart",
-                        str(ASSETS / "demo.mp4")], check=True)
+                        str(DEMO_MP4)], check=True)
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(args.fps), "-i", pattern, "-vf",
                         "fps=10,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=diff[p];"
-                        "[b][p]paletteuse=dither=none:diff_mode=rectangle", str(ASSETS / "demo.gif")], check=True)
+                        "[b][p]paletteuse=dither=none:diff_mode=rectangle", str(DEMO_GIF)], check=True)
     seconds = round(count / args.fps, 1)
     (ASSETS / "demo.json").write_text(json.dumps({"seconds": seconds, "frames": count, "fps": args.fps}) + "\n")
-    print(f"OK: {count} frames, {seconds}s -> docs/assets/demo.mp4, demo.gif, poster.png, flow.png")
+    print(f"OK: {count} frames, {seconds}s -> {DEMO_MP4.name}, {DEMO_GIF.name}, poster.png, {FLOW_PNG.name}")
     return 0
 
 
