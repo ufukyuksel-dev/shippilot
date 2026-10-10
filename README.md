@@ -2,11 +2,9 @@
 
 # ShipPilot
 
-**Build, ship and grow mobile apps with Claude Code.**
-
-A Claude Code plugin that turns the release and growth work around a mobile app — Fastlane releases, store listings,
-Android device QA, Google / Meta / TikTok ads and a measured growth loop — into skills and commands you can run from
-your own repository, with every risky step behind an explicit approval.
+**Your mobile app's build-to-growth loop, run from Claude Code.**<br>
+Build → test & release → store & ad creatives → campaigns → measure → improve.
+You approve every release and every ad dollar.
 
 [![CI](https://github.com/ufukyuksel-dev/shippilot/actions/workflows/ci.yml/badge.svg)](https://github.com/ufukyuksel-dev/shippilot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -14,28 +12,30 @@ your own repository, with every risky step behind an explicit approval.
 
 [English](README.md) · [Türkçe](README.tr.md)
 
-<img src="docs/assets/demo.gif" alt="ShipPilot demo: install, commands and real metadata checker output" width="800">
-
-<sub>28-second demo · [MP4 version](docs/assets/demo.mp4) · terminal scenes show real output, rendered by
-[`docs/make_demo.py`](docs/make_demo.py)</sub>
+<img src="docs/assets/flow.png" alt="Six stages: Build, Test & release, Store & creatives, Campaigns, Measure, Improve. Each card shows what ShipPilot produces and which command runs it; release, campaign changes and improvements wait for your approval." width="800">
 
 </div>
 
-## Why
+## What you get
 
-Writing the app is no longer the hard part. Getting it through signing, TestFlight and Play tracks, writing a store
-listing in ten languages that fits every character limit, testing on a real device, spending ad money carefully and
-then finding out *why* users leave — that is where solo developers and small studios lose weeks.
+- **One loop instead of six tools.** The same Claude Code session that changes your app also ships it, writes the
+  store and ad copy, reads your campaigns and checks what users did — and links the results back to the next change.
+- **Approval gates where money or users are affected.** Beta uploads, store-text publishing, review submission and
+  every ad change (budget, status, targeting, creation) wait for your explicit decision; ad changes go
+  preview → approve → read-back.
+- **Checks that run without Claude too.** The store-limit checker and the CI/CD template work in plain CI.
+- **Measured, not claimed.** The growth loop states sample sizes and decision rules up front and says
+  "not yet measurable" instead of declaring a win.
 
-We are a small studio. We shipped our word game **Wordfall** to the App Store and Google Play with Claude Code and
-these workflows. ShipPilot is those workflows, cleaned of our private setup and published so anyone can use them.
+<div align="center">
 
-## The loop
+<img src="docs/assets/demo.gif" alt="Walkthrough: one fictional app goes through the six stages" width="800">
 
-<img src="docs/assets/loop.svg" alt="Build, Ship, Grow, Measure, Improve" width="800">
+<sub>47-second walkthrough · [MP4](docs/assets/demo.mp4) · one fictional app, *Pocket Words*.
+Green **REAL OUTPUT** panels are produced by `scripts/check_metadata.py` while the video is rendered; amber
+**ILLUSTRATIVE** screens are representative, with sample data. Rendered by [`docs/make_demo.py`](docs/make_demo.py).</sub>
 
-ShipPilot is not an autopilot that spends your money. Claude does the reading, checking, drafting and preparing;
-**you** approve every upload, every store-text publish and every ad change.
+</div>
 
 ## Install
 
@@ -46,22 +46,49 @@ In Claude Code:
 /plugin install shippilot@shippilot
 ```
 
-Then, inside your app repository:
+Then, inside your app repository, start with a read-only report:
 
 ```text
 /shippilot:launch-check
 ```
+
+## The six stages
+
+| # | Stage | What ShipPilot does | Command / skill | Works today |
+|---|---|---|---|---|
+| 1 | **Build** | Claude Code makes the change; `launch-check` reports what the repo still needs for releases, ads and analytics | `/shippilot:launch-check` | Yes (read-only) |
+| 2 | **Test & release** | CI runs your tests and the store-limit checks; a beta build goes to TestFlight / Play internal after you approve | `/shippilot:check-metadata`, `/shippilot:beta`, [`templates/github-actions-release.yml`](templates/github-actions-release.yml), [`templates/Fastfile.example`](templates/Fastfile.example) | Yes, with your Fastlane + store credentials |
+| 3 | **Store & creatives** | Localizes store text within limits; drafts ad angles, headlines, descriptions and creative briefs from what the app really does | `/shippilot:localize`, `/shippilot:ad-creatives`, `store-listing-assets` | Text: yes. Visuals: with your design/image tools |
+| 4 | **Campaigns** | Reads campaigns across accounts; budget/status/targeting changes go preview → approve → read-back | `/shippilot:ads-report`, `google-ads-management`, `meta-ads-management`, `tiktok-ads-management` | With a connected ads MCP |
+| 5 | **Measure** | Joins campaigns with in-app behaviour for the same cohort and window (onboarding, day-1 return, purchases) | `/shippilot:grow`, `growth-loop` | With your analytics source |
+| 6 | **Improve** | One hypothesis, one change (app *or* ads), a decision rule set in advance, then re-measure — next loop starts at 1 | `/shippilot:grow` | Yes; you decide every change |
 
 ## Commands
 
 | Command | What it does | Changes anything? |
 |---|---|---|
 | `/shippilot:launch-check` | Readiness report: Fastlane lanes, metadata, device QA, ads and analytics connections | No |
-| `/shippilot:localize <locales>` | Writes localized store text to `fastlane/metadata`, validates limits, shows the diff | Local files only |
 | `/shippilot:check-metadata` | Checks App Store / Google Play length limits | No |
 | `/shippilot:beta [ios\|android\|both]` | Plans a beta upload (TestFlight / Play internal), uploads after you confirm | After approval |
+| `/shippilot:localize <locales>` | Writes localized store text to `fastlane/metadata`, validates limits, shows the diff | Local files only |
+| `/shippilot:ad-creatives [platforms]` | Ad angles, headlines, descriptions and creative briefs in `ads/creatives/<date>.md` | Local files only |
 | `/shippilot:ads-report [period]` | Spend, installs and cost per install across connected ad accounts | No |
 | `/shippilot:grow <question>` | Baseline → one hypothesis → one change → stops at the approval gate | After approval |
+
+## CI/CD release template
+
+[`templates/github-actions-release.yml`](templates/github-actions-release.yml) is a workflow for **your app
+repository**: pull requests run your tests and the store-limit checks; pushing a `v*` tag runs the beta lanes from
+[`templates/Fastfile.example`](templates/Fastfile.example) for Android and iOS.
+
+The approval comes from GitHub, not from the file. Set it up once:
+
+1. **Settings → Environments → New environment** `beta`.
+2. **Required reviewers:** add yourself or your team. Without this rule the beta jobs run without waiting.
+3. **Deployment branches and tags:** *Selected*, add the tag rule `v*`.
+4. Add the store credentials as **environment secrets** of `beta` (`PLAY_SERVICE_ACCOUNT_JSON`, `ASC_API_KEY_JSON`).
+
+Required reviewers on private repositories need a GitHub plan that supports environment protection rules.
 
 ## Skills and what they need
 
@@ -80,13 +107,15 @@ requirement is missing, the skill says exactly what is missing and stops at that
 
 ## Safety rules built in
 
-- **Approval gates:** uploads, publishing store text, review submission and every ad mutation (budget, status,
-  targeting, creation) require your explicit decision. Ad changes use preview → apply → read-back.
-- **Beta is not metadata:** `/shippilot:beta` uploads binaries only. Store text changes the *live* store page and
-  is a separate step.
-- **No secrets in output:** credentials are checked for presence, never printed, committed or logged.
-- **Measured, not claimed:** the growth loop reports sample sizes and "not yet measurable" instead of declaring wins;
-  correlation is labelled as correlation.
+- **Approval gates:** uploads, publishing store text, review submission and every ad mutation require your explicit
+  decision. In CI the gate is the `beta` environment's required reviewers.
+- **Beta is not metadata:** beta lanes upload binaries only. Store text changes the *live* store page and is a
+  separate step.
+- **Credentials stay in your control:** they live in your local environment when commands run on your machine, and
+  in your CI secret store when the GitHub Actions template runs. ShipPilot checks that they exist; it never prints,
+  commits or logs them.
+- **Measured, not claimed:** sample sizes, windows and decision rules are stated; correlation is labelled as
+  correlation.
 
 ## Metadata checker
 
@@ -113,16 +142,19 @@ recognised file) — an empty run never passes silently. Limits are from Apple's
 [App Store Connect reference](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information)
 and Google's [Play Console help](https://support.google.com/googleplay/android-developer/answer/9859152).
 
-A starting point for the beta lanes is in [`templates/Fastfile.example`](templates/Fastfile.example).
-
 ## Status
 
-**v0.1 — early.** What exists today: the skills, the commands, the metadata checker and its tests. What does not
-exist yet: a hosted service, automatic attribution between ad platforms and in-app analytics, or any autonomous
-spending. Feedback from people shipping real apps decides what comes next.
+**v0.2 — early.** What exists today: the skills, seven commands, the metadata checker and its tests, the Fastlane
+and GitHub Actions templates. What does not exist yet: a hosted service, automatic attribution between ad platforms
+and in-app analytics, or any autonomous spending. Feedback from people shipping real apps decides what comes next.
 
-Roadmap: App Review rejection analysis · screenshot localization pipeline · analytics adapters (Firebase/GA4) for the
-growth loop · iOS device QA.
+Roadmap: App Review rejection analysis · screenshot localization pipeline · analytics adapters (Firebase/GA4) for
+the growth loop · iOS device QA.
+
+## Why we built it
+
+We are a small studio. We shipped our word game **Wordfall** to the App Store and Google Play with Claude Code and
+these workflows. ShipPilot is those workflows, cleaned of our private setup and published so anyone can use them.
 
 ## How this repository is built
 

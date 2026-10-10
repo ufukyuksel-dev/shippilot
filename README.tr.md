@@ -2,42 +2,48 @@
 
 # ShipPilot
 
-**Mobil uygulamanı Claude Code ile geliştir, yayımla, büyüt.**
-
-Bir mobil uygulamanın yayın ve büyüme işlerini kendi repo'ndan çalıştırabileceğin skill ve komutlara dönüştüren bir
-Claude Code plugin'i. Kapsadığı işler: Fastlane ile yayın, mağaza sayfası, Android cihaz testi, Google / Meta /
-TikTok reklamları ve ölçerek ilerleyen büyüme döngüsü. Riskli her adım senin açık onayını bekler.
+**Mobil uygulamanın geliştirmeden büyümeye kadar tüm döngüsü, Claude Code içinden.**<br>
+Geliştir → test et ve yayımla → mağaza ve reklam kreatifleri → kampanyalar → ölç → iyileştir.
+Her yayını ve harcanan her reklam dolarını sen onaylarsın.
 
 [![CI](https://github.com/ufukyuksel-dev/shippilot/actions/workflows/ci.yml/badge.svg)](https://github.com/ufukyuksel-dev/shippilot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 [English](README.md) · [Türkçe](README.tr.md)
 
-<img src="docs/assets/demo.gif" alt="ShipPilot demo" width="800">
-
-<sub>28 saniyelik demo · [MP4](docs/assets/demo.mp4) · terminal sahneleri gerçek çıktıdır</sub>
+<img src="docs/assets/flow.png" alt="Altı aşama: Build, Test & release, Store & creatives, Campaigns, Measure, Improve" width="800">
 
 </div>
 
-## Neden
+## Ne kazanırsın
 
-Artık uygulamayı yazmak işin zor kısmı değil. Asıl haftalar şuralarda kayboluyor:
-- imzalama, TestFlight ve Play kanalları,
-- her karakter sınırına uyan on dilde mağaza metni,
-- gerçek cihazda test,
-- reklam bütçesini dikkatli harcamak,
-- kullanıcıların *neden* ayrıldığını bulmak.
+- **Altı ayrı araç yerine tek döngü.** Uygulamayı değiştiren Claude Code oturumu aynı zamanda şunları yapar:
+  - uygulamayı yayımlar,
+  - mağaza ve reklam metnini yazar,
+  - kampanyaları okur,
+  - kullanıcıların ne yaptığını kontrol eder.
 
-Biz küçük bir stüdyoyuz. Kelime oyunumuz **Wordfall**'u bu iş akışları ve Claude Code ile App Store'a ve Google
-Play'e çıkardık. ShipPilot, bu iş akışlarının özel ayarlarımızdan arındırılmış ve herkesin kullanımına açılmış
-hâli.
+  Sonuçlar bir sonraki değişikliğe bağlanır.
+- **Para ya da kullanıcı etkilendiğinde onay kapısı.** Şu adımların hepsi senin açık kararını bekler:
+  - beta yükleme,
+  - mağaza metninin yayımlanması,
+  - incelemeye gönderme,
+  - her reklam değişikliği.
 
-## Döngü
+  Reklam değişiklikleri önce önizlenir, sonra onaylanır, ardından sonuç yeniden okunarak doğrulanır.
+- **Claude olmadan da çalışan kontroller.** Mağaza sınırı kontrolcüsü ve CI/CD şablonu düz CI'da da çalışır.
+- **İddia değil ölçüm.** Büyüme döngüsü örneklem büyüklüğünü ve karar kuralını baştan söyler. Kazanım ilan etmek
+  yerine gerektiğinde "henüz ölçülemez" der.
 
-<img src="docs/assets/loop.svg" alt="Build, Ship, Grow, Measure, Improve" width="800">
+<div align="center">
 
-ShipPilot paranı harcayan bir otopilot değil. Claude okur, kontrol eder, taslak hazırlar. Her yüklemeyi, mağaza
-metninin yayımlanmasını ve her reklam değişikliğini **sen** onaylarsın.
+<img src="docs/assets/demo.gif" alt="Tek uygulamanın altı aşamadan geçişi" width="800">
+
+<sub>47 saniyelik tanıtım · [MP4](docs/assets/demo.mp4) · uydurma bir uygulama: *Pocket Words*.
+Yeşil **REAL OUTPUT** panelleri, video üretilirken `scripts/check_metadata.py` çalıştırılarak oluşturulur. Amber
+**ILLUSTRATIVE** ekranlar temsilidir, içindeki sayılar örnek veridir.</sub>
+
+</div>
 
 ## Kurulum
 
@@ -48,34 +54,39 @@ Claude Code içinde:
 /plugin install shippilot@shippilot
 ```
 
-Ardından uygulamanın repo'sunda:
+Ardından uygulamanın repo'sunda, hiçbir şeyi değiştirmeyen bir raporla başla:
 
 ```text
 /shippilot:launch-check
 ```
 
-## Komutlar
+## Altı aşama
 
-| Komut | Ne yapar | Bir şey değiştirir mi? |
-|---|---|---|
-| `/shippilot:launch-check` | Hazırlık raporu: Fastlane, metadata, cihaz testi, reklam ve analitik bağlantıları | Hayır |
-| `/shippilot:localize <diller>` | Çevrilmiş mağaza metnini `fastlane/metadata` altına yazar, sınırları kontrol eder, diff gösterir | Yalnızca yerel dosyalar |
-| `/shippilot:check-metadata` | App Store / Google Play karakter sınırlarını kontrol eder | Hayır |
-| `/shippilot:beta [ios\|android\|both]` | Beta yüklemesini planlar, onayından sonra TestFlight / Play internal'a yükler | Onaydan sonra |
-| `/shippilot:ads-report [dönem]` | Bağlı reklam hesaplarında harcama, yükleme ve yükleme başı maliyet | Hayır |
-| `/shippilot:grow <soru>` | Mevcut durumu ölçer → tek hipotez → tek değişiklik → onay kapısında durur | Onaydan sonra |
+| # | Aşama | ShipPilot ne yapar | Komut / skill | Bugün çalışıyor mu |
+|---|---|---|---|---|
+| 1 | **Geliştir** | Claude Code değişikliği yapar; `launch-check` repo'da eksik olanları raporlar | `/shippilot:launch-check` | Evet (salt okunur) |
+| 2 | **Test et ve yayımla** | CI testleri ve mağaza sınırı kontrolünü çalıştırır; beta build onaydan sonra TestFlight / Play internal'a gider | `/shippilot:check-metadata`, `/shippilot:beta`, [CI şablonu](templates/github-actions-release.yml) | Evet, Fastlane ve mağaza kimlik bilgilerinle |
+| 3 | **Mağaza ve kreatif** | Mağaza metnini sınırlar içinde çevirir; uygulamanın gerçekte yaptığından reklam açıları, başlıklar ve brief'ler hazırlar | `/shippilot:localize`, `/shippilot:ad-creatives` | Metin: evet. Görsel: senin tasarım araçlarınla |
+| 4 | **Kampanyalar** | Hesapları okur; bütçe, durum ve hedefleme değişiklikleri önce önizlenir, onaylanır ve sonuç yeniden okunur | `/shippilot:ads-report` + reklam skill'leri | Reklam MCP'si bağlıysa |
+| 5 | **Ölç** | Aynı kohort ve aynı zaman penceresinde kampanya verisini uygulama içi davranışla birleştirir | `/shippilot:grow` | Analitik kaynağın varsa |
+| 6 | **İyileştir** | Tek hipotez, tek değişiklik, önceden belirlenmiş karar kuralı, ardından yeniden ölçüm | `/shippilot:grow` | Evet; her kararı sen verirsin |
 
-Skill'lerin neye ihtiyaç duyduğu, güvenlik kuralları ve metadata kontrolcüsünün sınır tablosu için
-[İngilizce README](README.md#skills-and-what-they-need)'ye bak.
+## CI/CD şablonu: onay nasıl kurulur
 
-## Durum
+[`templates/github-actions-release.yml`](templates/github-actions-release.yml) senin uygulama repo'n için hazırlanmış
+bir iş akışıdır. Onayı dosyanın kendisi sağlamaz, GitHub sağlar. Bir kez şöyle kur:
 
-**v0.1, erken sürüm.**
-- **Bugün var olanlar:** skill'ler, komutlar, metadata kontrolcüsü ve testleri.
-- **Henüz olmayanlar:** barındırılan bir servis, reklam platformlarıyla uygulama içi analitiğin otomatik
-  eşleştirilmesi ve otonom harcama.
+1. Settings → Environments altında `beta` adında bir ortam oluştur.
+2. **Required reviewers** listesine kendini ekle.
+3. Deployment etiketlerine `v*` kuralını ekle.
+4. Mağaza kimlik bilgilerini bu ortamın secret'ları olarak ekle.
 
-Sırada ne olacağını gerçek uygulama yayımlayan kullanıcıların geri bildirimi belirleyecek.
+**Required reviewers** kuralı yoksa beta job'ları onay beklemeden çalışır.
+
+**Kimlik bilgileri:** Komutlar senin makinende çalışırken senin yerel ortamında, şablon çalışırken CI secret
+store'unda durur. ShipPilot bunları yazdırmaz, commit etmez ve loglamaz.
+
+Komut listesi, skill gereksinimleri ve metadata sınır tablosu için [İngilizce README](README.md)'ye bak.
 
 ## Lisans
 

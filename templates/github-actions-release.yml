@@ -1,0 +1,98 @@
+# ShipPilot release workflow for YOUR app repository. Copy to .github/workflows/release.yml and adapt the lines
+# marked ADAPT. It pairs with templates/Fastfile.example (lanes `ios beta` and `android beta`).
+#
+#   pull request / push to main  ->  tests + store-metadata limits
+#   push a tag v*                ->  tests, then a beta upload that WAITS FOR YOUR APPROVAL
+#
+# The approval is not created by this file. Set it up once in GitHub:
+#   Settings -> Environments -> New environment "beta"
+#     -> Required reviewers: add yourself (and/or your team)        <- this is the approval gate
+#     -> Deployment branches and tags: "Selected", add tag rule  v*
+#   Then add the secrets below to that environment (Environment secrets), not to the whole repository.
+# Without the Required reviewers rule the beta jobs run without waiting. Required reviewers on private
+# repositories need a GitHub plan that supports environment protection rules.
+#
+# Environment secrets used (names are suggestions; values never go into the repository):
+#   PLAY_SERVICE_ACCOUNT_JSON     Google Play service account JSON (content)
+#   ASC_API_KEY_JSON              App Store Connect API key in fastlane JSON format (content)
+#   MATCH_PASSWORD, MATCH_GIT_BASIC_AUTHORIZATION   only if you sign iOS builds with fastlane match
+
+name: release
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+env:
+  SHIPPILOT_REF: v0.2.0   # pin the checker to a ShipPilot release (or a commit SHA)
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # ADAPT: your own test command(s), for example ./gradlew testDebugUnitTest or a macOS job with xcodebuild test.
+      - name: App tests
+        run: |
+          echo "ADAPT - run your test suite here"
+      - name: Store metadata limits
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/ufukyuksel-dev/shippilot/${SHIPPILOT_REF}/scripts/check_metadata.py" \
+            -o "${RUNNER_TEMP}/check_metadata.py"
+          if [ -d fastlane/metadata/android ]; then
+            python "${RUNNER_TEMP}/check_metadata.py" --platform android --metadata fastlane/metadata/android
+          fi
+          if [ -d fastlane/metadata ] && find fastlane/metadata -mindepth 2 -maxdepth 2 -name name.txt | grep -q .; then
+            python "${RUNNER_TEMP}/check_metadata.py" --platform ios --metadata fastlane/metadata
+          fi
+
+  beta-android:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    environment: beta          # waits here until a required reviewer approves
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Upload beta to Play internal track (binary only)
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          key="${RUNNER_TEMP}/play.json"
+          printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" > "$key"
+          PLAY_JSON_KEY_PATH="$key" bundle exec fastlane android beta
+          rm -f "$key"
+
+  beta-ios:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: macos-latest
+    environment: beta          # waits here until a required reviewer approves
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      # ADAPT: code signing, e.g. `bundle exec fastlane match appstore --readonly` with MATCH_* secrets.
+      - name: Upload beta to TestFlight (binary only)
+        env:
+          ASC_API_KEY_JSON: ${{ secrets.ASC_API_KEY_JSON }}
+        run: |
+          key="${RUNNER_TEMP}/asc.json"
+          printf '%s' "$ASC_API_KEY_JSON" > "$key"
+          APP_STORE_CONNECT_API_KEY_PATH="$key" bundle exec fastlane ios beta
+          rm -f "$key"
